@@ -1,45 +1,30 @@
 #include <ncurses.h>
-
-int main() {
+int confirmation_box(WINDOW* win) {
     int highlight = 1;
     int choice;
 
-    initscr();
-    clear();
-    noecho();
-    cbreak();
-    keypad(stdscr, TRUE);
-    start_color();
-    init_pair(1, COLOR_WHITE, COLOR_BLUE);
-    WINDOW* confirmacionW = newwin(10, 30, 4, 2); //parameters: height, width, y, x
-    wbkgd(confirmacionW,COLOR_PAIR(1));
-    box(confirmacionW, 0, 0);
-    keypad(confirmacionW, TRUE);
-    refresh();
-    wrefresh(confirmacionW);
-
-    mvwprintw(confirmacionW, 1, 2, "¿Desea continuar?");
-    mvwprintw(confirmacionW, 3, 2, "Sí");
-    mvwprintw(confirmacionW, 3, 6, "No");
+    mvwprintw(win, 1, 2, "¿Desea continuar?");
+    mvwprintw(win, 3, 2, "Sí");
+    mvwprintw(win, 3, 6, "No");
 
     while (1) {
         if (highlight == 1) {
-            wattron(confirmacionW, A_REVERSE);
-            mvwprintw(confirmacionW, 3, 2, "Sí");
-            wattroff(confirmacionW, A_REVERSE);
+            wattron(win, A_REVERSE);
+            mvwprintw(win, 3, 2, "Sí");
+            wattroff(win, A_REVERSE);
         } else {
-            mvwprintw(confirmacionW, 3, 2, "Sí");
+            mvwprintw(win, 3, 2, "Sí");
         }
 
         if (highlight == 2) {
-            wattron(confirmacionW, A_REVERSE);
-            mvwprintw(confirmacionW, 3, 6, "No");
-            wattroff(confirmacionW, A_REVERSE);
+            wattron(win, A_REVERSE);
+            mvwprintw(win, 3, 6, "No");
+            wattroff(win, A_REVERSE);
         } else {
-            mvwprintw(confirmacionW, 3, 6, "No");
+            mvwprintw(win, 3, 6, "No");
         }
 
-        choice = wgetch(confirmacionW);
+        choice = wgetch(win);
 
         switch (choice) {
             case KEY_LEFT:
@@ -62,14 +47,36 @@ int main() {
             break;
         }
     }
-    wattron(confirmacionW, A_REVERSE);
+
     if (highlight == 1) {
-        mvwprintw(confirmacionW,4, 1, " Seleccionaste: Sí");// parameters: window, y, x, string
+        return 1;
     } else {
-        mvwprintw(confirmacionW,4, 1, "Seleccionaste :No");
+        return 0;
     }
-    wattroff(confirmacionW, A_REVERSE);
-    wrefresh(confirmacionW);
+}
+int main() {
+    initscr();
+    clear();
+    noecho();
+    cbreak();
+    keypad(stdscr, TRUE);
+    start_color();
+    init_pair(1, COLOR_WHITE, COLOR_BLUE);
+    WINDOW* confirmationW = newwin(10, 30, 4, 2); //parameters: height, width, y, x
+    wbkgd(confirmationW,COLOR_PAIR(1));
+    box(confirmationW, 0, 0);
+    keypad(confirmationW, TRUE);
+    refresh();
+    wrefresh(confirmationW);
+
+    int choice = confirmation_box(confirmationW);
+
+    if (choice == 1) {
+        mvwprintw(confirmationW, 2, 1, "Sí");
+    } else {
+        mvwprintw(confirmationW, 2, 1, "No");
+    }
+    wrefresh(confirmationW);
     refresh();
     getch();
     endwin();
