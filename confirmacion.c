@@ -11,35 +11,35 @@ int main() {
     keypad(stdscr, TRUE);
     start_color();
     init_pair(1, COLOR_WHITE, COLOR_BLUE);
-    WINDOW* menu_win = newwin(10, 30, 4, 2); //parameters: height, width, y, x
-    wbkgd(menu_win,COLOR_PAIR(1));
-    box(menu_win, 0, 0);
-    keypad(menu_win, TRUE);
+    WINDOW* confirmacionW = newwin(10, 30, 4, 2); //parameters: height, width, y, x
+    wbkgd(confirmacionW,COLOR_PAIR(1));
+    box(confirmacionW, 0, 0);
+    keypad(confirmacionW, TRUE);
     refresh();
-    wrefresh(menu_win);
+    wrefresh(confirmacionW);
 
-    mvwprintw(menu_win, 1, 2, "¿Desea continuar?");
-    mvwprintw(menu_win, 3, 2, "Sí");
-    mvwprintw(menu_win, 3, 6, "No");
+    mvwprintw(confirmacionW, 1, 2, "¿Desea continuar?");
+    mvwprintw(confirmacionW, 3, 2, "Sí");
+    mvwprintw(confirmacionW, 3, 6, "No");
 
     while (1) {
         if (highlight == 1) {
-            wattron(menu_win, A_REVERSE);
-            mvwprintw(menu_win, 3, 2, "Sí");
-            wattroff(menu_win, A_REVERSE);
+            wattron(confirmacionW, A_REVERSE);
+            mvwprintw(confirmacionW, 3, 2, "Sí");
+            wattroff(confirmacionW, A_REVERSE);
         } else {
-            mvwprintw(menu_win, 3, 2, "Sí");
+            mvwprintw(confirmacionW, 3, 2, "Sí");
         }
 
         if (highlight == 2) {
-            wattron(menu_win, A_REVERSE);
-            mvwprintw(menu_win, 3, 6, "No");
-            wattroff(menu_win, A_REVERSE);
+            wattron(confirmacionW, A_REVERSE);
+            mvwprintw(confirmacionW, 3, 6, "No");
+            wattroff(confirmacionW, A_REVERSE);
         } else {
-            mvwprintw(menu_win, 3, 6, "No");
+            mvwprintw(confirmacionW, 3, 6, "No");
         }
 
-        choice = wgetch(menu_win);
+        choice = wgetch(confirmacionW);
 
         switch (choice) {
             case KEY_LEFT:
@@ -62,14 +62,14 @@ int main() {
             break;
         }
     }
-    wattron(menu_win, A_REVERSE);
+    wattron(confirmacionW, A_REVERSE);
     if (highlight == 1) {
-        mvwprintw(menu_win,4, 1, " Seleccionaste: Sí");// parameters: window, y, x, string
+        mvwprintw(confirmacionW,4, 1, " Seleccionaste: Sí");// parameters: window, y, x, string
     } else {
-        mvwprintw(menu_win,4, 1, "Seleccionaste :No");
+        mvwprintw(confirmacionW,4, 1, "Seleccionaste :No");
     }
-    wattroff(menu_win, A_REVERSE);
-    wrefresh(menu_win);
+    wattroff(confirmacionW, A_REVERSE);
+    wrefresh(confirmacionW);
     refresh();
     getch();
     endwin();
