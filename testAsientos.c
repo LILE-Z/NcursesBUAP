@@ -1,74 +1,72 @@
-#include <curses.h>
 #include <ncurses.h>
-#include <stdio.h>
-#include <stdlib.h>
-
-void imprimir_menu() {
-    clear();
-    char *opciones[10] = {"Opción 1", "Opción 2", "Opción 3", "Opción 4", "Opción 5",
-                          "Opción 6", "Opción 7", "Opción 8", "Opción 9", "Opción 10"};
-    int x[10] = {1, 1, 1, 1, 1, 16, 16, 16, 16, 16};
-    int y[10] = {1, 4, 7, 10, 13, 1, 4, 7, 10, 13};
-    for (int i = 0; i < 10; i++) {
-        mvprintw(y[i], x[i], "%d. %s", i+1, opciones[i]);
-    }
-    refresh();
-}
-
-void seleccionar_opcion(int opcion) {
-    clear();
-    mvprintw(0, 0, "Seleccionaste la opción %d. Presiona cualquier tecla para continuar.", opcion);
-    refresh();
-    getch();
-}
 
 int main() {
+    // Inicializar ncurses
     initscr();
-    curs_set(0);
+
+    // Desactivar eco del teclado y activar la captura de teclas especiales
     noecho();
     keypad(stdscr, TRUE);
-    int opcion = 1;
-    imprimir_menu();
-    while (1) {
+
+    // Definir tres columnas de opciones
+    const char* column1[] = {"Opción 1", "Opción 2", "Opción 3", "Opción 10"};
+    const char* column2[] = {"Opción 4", "Opción 5", "Opción 6", ""};
+    const char* column3[] = {"Opción 7", "Opción 8", "Opción 9", ""};
+
+    // Definir variables para la posición del cursor
+    int fila = 0;
+    int columna = 0;
+    int opcion = 0;
+    // Bucle principal
+    while (true) {
+        // Borrar la pantalla y mostrar las tres columnas de opciones
+        clear();
+
+        for (int i = 0; i < 4; i++) {
+            mvprintw(i, 0, column1[i]);
+            mvprintw(i, 15, column2[i]);
+            mvprintw(i, 30, column3[i]);
+        }
+
+        // Resaltar la opción seleccionada
+        attron(A_REVERSE);
+        mvprintw(fila, columna * 15, columna == 0 ? column1[fila] : columna == 1 ? column2[fila] : column3[fila]);
+        attroff(A_REVERSE);
+
+        // Esperar a que el usuario presione una tecla
         int tecla = getch();
-		clear();
+
+        // Actualizar la posición del cursor según la tecla presionada
         switch (tecla) {
             case KEY_UP:
-                opcion--;
-                if (opcion < 1) opcion = 10;
+                fila = (fila - 1 + 4) % 4;
                 break;
             case KEY_DOWN:
-                opcion++;
-                if (opcion > 10) opcion = 1;
+                fila = (fila + 1) % 4;
                 break;
             case KEY_LEFT:
-                opcion -= 5;
-                if (opcion < 1) opcion += 10;
+                columna = (columna - 1 + 3) % 3;
                 break;
             case KEY_RIGHT:
-                opcion += 5;
-                if (opcion > 10) opcion -= 10;
+                columna = (columna + 1) % 3;
                 break;
             case 10:
-                seleccionar_opcion(opcion);
-                imprimir_menu();
+                 opcion = fila;
+
+                // Mostrar mensaje de selección
+                clear();
+                mvprintw(0, 0, "Seleccionaste la opción: %s", columna == 0 ? column1[opcion] : columna == 1 ? column2[opcion] : column3[opcion]);
+                getch(); // Esperar a que el usuario presione cualquier tecla para continuar
+                break;
+          break;
+            default:
                 break;
         }
-        char *opciones[10] = {"Opción 1", "Opción 2", "Opción 3", "Opción 4", "Opción 5",
-                              "Opción 6", "Opción 7", "Opción 8", "Opción 9", "Opción 10"};
-        int x[10] = {1, 1, 1, 1, 1, 16, 16, 16, 16, 16};
-        int y[10] = {1, 4, 7, 10, 13, 1, 4, 7, 10, 13};
-        for (int i = 0; i < 10; i++) {
-            if (opcion == i+1) {
-                attron(A_REVERSE);
-                mvprintw(y[i], x[i], "%d. %s", i+1, opciones[i]);
-                attroff(A_REVERSE);
-            } else {
-                mvprintw(y[i], x[i], "%d. %s", i+1, opciones[i]);
-            }
-        }
-        refresh();
     }
+   getch();
+    // Finalizar ncurses
     endwin();
+
     return 0;
 }
+
