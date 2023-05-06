@@ -1,23 +1,26 @@
 #include <ncurses.h>
-
+#include <string.h>
 void mostrar_opciones(WINDOW* ventana, const char* opciones[4][3], int fila, int columna) {
     // Borrar la ventana y mostrar las tres columnas de opciones
     wclear(ventana);
-
+        // Imprimir el título
+    mvwprintw(ventana, 1, (getmaxx(ventana) - 6) / 2, "Horario");
+    wborder(ventana,'|','|','-','-','+','+','+','+');
+    
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 3; j++) {
-            mvwprintw(ventana, i, j * 15, opciones[i][j]);
+            mvwprintw(ventana, i + 2, j * 15 + 2, opciones[i][j]);
         }
     }
 
     // Resaltar la opción seleccionada
     wattron(ventana, A_REVERSE);
-    mvwprintw(ventana, fila, columna * 15, opciones[fila][columna]);
+    mvwprintw(ventana, fila + 2, columna * 15 + 2, opciones[fila][columna]);
     wattroff(ventana, A_REVERSE);
-
     // Actualizar la ventana
     wrefresh(ventana);
 }
+
 
 void ejecutar_menu(WINDOW* ventana_opciones, const char* opciones[4][3]) {
     // Definir variables para la posición del cursor
@@ -76,20 +79,10 @@ int main() {
     noecho();
     keypad(stdscr, TRUE);
 
-    // Calcular el tamaño necesario para la ventana
-    int altura_ventana = 6;
-    int ancho_ventana = 47;
-
-    // Calcular la posición para centrar la ventana en pantalla
-    int y_ventana = (LINES - altura_ventana) / 2;
-    int x_ventana = (COLS - ancho_ventana) / 2;
-
-    // Crear una ventana para mostrar las opciones con bor
-    // Crear una ventana para mostrar las opciones con borde
-    WINDOW* ventana_opciones = newwin(altura_ventana, ancho_ventana, y_ventana, x_ventana);
-    wborder(ventana_opciones, '|', '|', '-', '-', '+', '+', '+', '+');
+    WINDOW* ventana_opciones = newwin(7, 45,  (LINES - 7) / 2,  (COLS - 45) / 2);
     wrefresh(ventana_opciones); // Actualizar la ventana
     refresh(); // Actualizar la pantalla
+
     // Ejecutar el menú
     ejecutar_menu(ventana_opciones, opciones);
 
@@ -98,4 +91,3 @@ int main() {
 
     return 0;
 }
-
