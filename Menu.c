@@ -65,6 +65,8 @@ void print_menu(WINDOW *menu_win, int highlight)
   y = 3;
   wborder(menu_win, '|', '|', '-', '-', '+', '+', '+', '+');
   mvwprintw(menu_win, 1, 5, "MENU");
+  mvwchgat(menu_win, 1, 5, 5, A_BOLD, 1, NULL);  //parametros: ventana, y, x, largo, atributos, color, NULL
+
   for(i = 0; i < n_choices; ++i)
     {   if(highlight == i + 1) /* Resalta lo opcion actual */
         { wattron(menu_win, A_REVERSE | A_BOLD );
