@@ -39,7 +39,7 @@ int main()
   //creating windows
 
 //             MENU
-  menu_win = newwin(12,15,4,0); //parametros: alto, ancho, y, x
+  menu_win = newwin(14,15,4,0); //parametros: alto, ancho, y, x
   wbkgd(menu_win, COLOR_PAIR(2));
   keypad(menu_win, TRUE);
   mvprintw(0, 0, "Utilice las flechas para ir arriba y abajo, Presione enter para elegir");
@@ -61,10 +61,10 @@ int main()
 void print_menu(WINDOW *menu_win, int highlight)
 {
   int x, y, i;
-
   x = 2;
-  y = 1;
+  y = 3;
   wborder(menu_win, '|', '|', '-', '-', '+', '+', '+', '+');
+  mvwprintw(menu_win, 1, 5, "MENU");
   for(i = 0; i < n_choices; ++i)
     {   if(highlight == i + 1) /* Resalta lo opcion actual */
         { wattron(menu_win, A_REVERSE | A_BOLD );
