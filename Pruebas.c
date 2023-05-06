@@ -50,11 +50,15 @@ void ejecutar_menu(WINDOW* ventana_opciones, const char* opciones[], int filas, 
                 columna = (columna + 1) % columnas;
                 break;
             case 10:
-                // Mostrar mensaje de selección
-                clear();
-                mvprintw(0, 0, "Seleccionaste la opción: %s", opciones[fila * columnas + columna]);
-                getch(); // Esperar a que el usuario presione cualquier tecla para continuar
-                return; // Salir de la función
+                // Verificar si la opción seleccionada es válida
+                if (fila * columnas + columna < filas * columnas - 2) {
+                    // Mostrar mensaje de selección
+                    clear();
+                    mvprintw(0, 0, "Seleccionaste la opción: %s", opciones[fila * columnas + columna]);
+                    getch(); // Esperar a que el usuario presione cualquier tecla para continuar
+                    return; // Salir de la función
+                }
+                break;
             default:
                 break;
         }
@@ -63,6 +67,7 @@ void ejecutar_menu(WINDOW* ventana_opciones, const char* opciones[], int filas, 
         mostrar_opciones(ventana_opciones, opciones, filas, columnas, fila, columna);
     }
 }
+
 
 int main() {
     // Definir las opciones como un arreglo
