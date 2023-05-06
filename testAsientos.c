@@ -1,38 +1,34 @@
 #include <ncurses.h>
 
-int main() {
-    // Inicializar ncurses
-    initscr();
+void mostrar_opciones(WINDOW* ventana, const char* opciones[4][3], int fila, int columna) {
+    // Borrar la ventana y mostrar las tres columnas de opciones
+    wclear(ventana);
 
-    // Desactivar eco del teclado y activar la captura de teclas especiales
-    noecho();
-    keypad(stdscr, TRUE);
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 3; j++) {
+            mvwprintw(ventana, i, j * 15, opciones[i][j]);
+        }
+    }
 
-    // Definir tres columnas de opciones
-    const char* column1[] = {"Opción 1", "Opción 2", "Opción 3", "Opción 10"};
-    const char* column2[] = {"Opción 4", "Opción 5", "Opción 6", ""};
-    const char* column3[] = {"Opción 7", "Opción 8", "Opción 9", ""};
+    // Resaltar la opción seleccionada
+    wattron(ventana, A_REVERSE);
+    mvwprintw(ventana, fila, columna * 15, opciones[fila][columna]);
+    wattroff(ventana, A_REVERSE);
 
+    // Actualizar la ventana
+    wrefresh(ventana);
+}
+
+void ejecutar_menu(WINDOW* ventana_opciones, const char* opciones[4][3]) {
     // Definir variables para la posición del cursor
     int fila = 0;
     int columna = 0;
-    int opcion = 0;
+
+    // Mostrar las opciones por primera vez
+    mostrar_opciones(ventana_opciones, opciones, fila, columna);
+
     // Bucle principal
     while (true) {
-        // Borrar la pantalla y mostrar las tres columnas de opciones
-        clear();
-
-        for (int i = 0; i < 4; i++) {
-            mvprintw(i, 0, column1[i]);
-            mvprintw(i, 15, column2[i]);
-            mvprintw(i, 30, column3[i]);
-        }
-
-        // Resaltar la opción seleccionada
-        attron(A_REVERSE);
-        mvprintw(fila, columna * 15, columna == 0 ? column1[fila] : columna == 1 ? column2[fila] : column3[fila]);
-        attroff(A_REVERSE);
-
         // Esperar a que el usuario presione una tecla
         int tecla = getch();
 
@@ -51,19 +47,52 @@ int main() {
                 columna = (columna + 1) % 3;
                 break;
             case 10:
-                 opcion = fila;
-
                 // Mostrar mensaje de selección
                 clear();
-                mvprintw(0, 0, "Seleccionaste la opción: %s", columna == 0 ? column1[opcion] : columna == 1 ? column2[opcion] : column3[opcion]);
+                mvprintw(0, 0, "Seleccionaste la opción: %s", opciones[fila][columna]);
                 getch(); // Esperar a que el usuario presione cualquier tecla para continuar
-                break;
-          break;
+                return; // Salir de la función
             default:
                 break;
         }
+
+        // Mostrar las opciones actualizadas
+        mostrar_opciones(ventana_opciones, opciones, fila, columna);
     }
-   getch();
+}
+
+int main() {
+    // Definir las opciones como una matriz
+    const char* opciones[4][3] = {
+        {"Opción 1", "Opción 2", "Opción 3"},
+        {"Opción 4", "Opción 5", "Opción 6"},
+        {"Opción 7", "Opción 8", "Opción 9"},
+        {"Opción 10", "", ""}
+    };
+
+    // Inicializar ncurses
+    initscr();
+    cbreak();
+    noecho();
+    keypad(stdscr, TRUE);
+
+    // Calcular el tamaño necesario para la ventana
+    int altura_ventana = 6;
+    int ancho_ventana = 47;
+
+    // Calcular la posición para centrar la ventana en pantalla
+    int y_ventana = (LINES - altura_ventana) / 2;
+    int x_ventana = (COLS - ancho_ventana) / 2;
+
+    // Crear una ventana para mostrar las opciones con bor
+    // Crear una ventana para mostrar las opciones con borde
+    WINDOW* ventana_opciones = newwin(altura_ventana, ancho_ventana, y_ventana, x_ventana);
+    wborder(ventana_opciones, '|', '|', '-', '-', '+', '+', '+', '+');
+    wrefresh(ventana_opciones); // Actualizar la ventana
+    refresh(); // Actualizar la pantalla
+    // Ejecutar el menú
+    ejecutar_menu(ventana_opciones, opciones);
+
     // Finalizar ncurses
     endwin();
 
