@@ -23,6 +23,19 @@ void mostrar_opciones(WINDOW* ventana, const char* opciones[], int filas, int co
 }
 
 int ejecutar_menu(WINDOW* ventana_opciones, const char* opciones[], int filas, int columnas) {
+    // Verificar si todos los elementos del menú están vacíos
+    bool menu_vacio = true;
+    for (int i = 0; i < filas * columnas; i++) {
+        if (strlen(opciones[i]) > 0) {
+            menu_vacio = false;
+            break;
+        }
+    }
+
+    if (menu_vacio) {
+        return -1;  // Menú vacío, retornar valor indicativo
+    }
+
     int fila = 0;
     int columna = 0;
 
