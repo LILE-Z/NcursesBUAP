@@ -54,28 +54,18 @@ int main()
     start_color();
     noecho();
     curs_set(FALSE);
-
+    
+ 
+    mvprintw(1,(COLS-6)/2,"BIENVENIDO");
+    refresh();
     // Definir pares de colores
     init_pair(1, COLOR_WHITE, COLOR_BLUE);
     init_pair(2, COLOR_YELLOW, COLOR_GREEN);
-
-    // Crear la ventana
-    int win_height = 7;
-    int win_width = COLS - 4;
-    int win_x = 2;
-    int win_y = (LINES - win_height) / 2;
-    WINDOW* win = newwin(win_height, win_width, win_y, win_x);
-
-    // Configurar la barra de carga
-    int progress = 0;
-    int max_progress = 100;
-    int bar_width = win_width - 15;
-    int bar_x = 5;
-    int bar_y = 2;
+    WINDOW* win = newwin(7, COLS-4, (LINES-7), 2);
 
     // Actualizar el progreso de la barra
-    for (int i = 0; i <= max_progress; ++i) {
-        update_progress(win, i, max_progress, bar_width, bar_x, bar_y);
+    for (int i = 0; i <= 100; ++i) {
+        update_progress(win, i, 100, (COLS-4)-15, 5, 2);
         usleep(100000);
     }
 
