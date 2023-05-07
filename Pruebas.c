@@ -1,49 +1,44 @@
 #include <ncurses.h>
 #include <string.h>
 
-int main() {
-    char* title = "Título centrado";
-    char* asciiArt[] = {
-        "   /\\_/\\",
-        "  ( o.o )",
-        "   > ^ <"
-    };
-    int numLines = sizeof(asciiArt) / sizeof(asciiArt[0]);
+void printPelicula(WINDOW* win, const char* title, const char* asciiArt[]) {
+    int titleLength = strlen(title);
+    int titleX = (COLS - titleLength) / 2;
 
+    box(win, 0, 0);
+
+    mvwprintw(win,2 , titleX, "%s", title); //parametros window, y, x, string
+
+    for (int i = 0; asciiArt[i] != NULL; i++) {
+        int artX = (COLS - strlen(asciiArt[i])) / 2;
+        mvwprintw(win, 2 + i + 2, artX, "%s", asciiArt[i]);
+    }
+
+    wrefresh(win);
+    getch();
+}
+
+int main() {
     // Inicializar ncurses
     initscr();
     cbreak();
     noecho();
     keypad(stdscr, TRUE);
 
-    // Obtener tamaño de la ventana
-    int windowHeight, windowWidth;
-    getmaxyx(stdscr, windowHeight, windowWidth);
-
-    // Calcular posiciones
-    int titleLength = strlen(title);
-    int titleX = (windowWidth - titleLength) / 2;
-    int titleY = windowHeight / 2 - numLines / 2;
-
-    int artX = (windowWidth - strlen(asciiArt[0])) / 2;
-
     // Crear ventana
-    WINDOW* win = newwin(windowHeight, windowWidth, 0, 0);
-    box(win, 0, 0);
+    WINDOW* win = newwin(0, 0, 0, 0);
     refresh();
-    // Imprimir título
-    mvwprintw(win, titleY, titleX, "%s", title);
+    // Definir contenido de la ventana
+    char* title = "Título centrado";
+    char* asciiArt[] = {
+        "   /\\_/\\",
+        "  ( o.o )",
+        "   > ^ <",
+        NULL
+    };
 
-    // Imprimir ASCII art
-    for (int i = 0; i < numLines; i++) {
-        mvwprintw(win, titleY + i + 2, artX, "%s", asciiArt[i]);
-    }
-
-    // Refrescar la ventana
-    wrefresh(win);
-
-    // Esperar la entrada del usuario
-    getch();
+    // Mostrar ventana
+    printPelicula(win, title, asciiArt);
 
     // Finalizar ncurses
     endwin();
