@@ -4,7 +4,7 @@ void mostrar_opciones(WINDOW* ventana, const char* opciones[], int filas, int co
     // Borrar la ventana y mostrar las opciones
     wclear(ventana);
     // Imprimir el título
-    mvwprintw(ventana, 1, (getmaxx(ventana) - 6) / 2, "Horario");
+    mvwprintw(ventana, 1, (getmaxx(ventana) - 7) / 2, "Horario");
 
     // Imprimir las opciones
     for (int i = 0; i < filas; i++) {
@@ -22,20 +22,15 @@ void mostrar_opciones(WINDOW* ventana, const char* opciones[], int filas, int co
     wrefresh(ventana);
 }
 
-void ejecutar_menu(WINDOW* ventana_opciones, const char* opciones[], int filas, int columnas) {
-    // Definir variables para la posición del cursor
+int ejecutar_menu(WINDOW* ventana_opciones, const char* opciones[], int filas, int columnas) {
     int fila = 0;
     int columna = 0;
 
-    // Mostrar las opciones por primera vez
     mostrar_opciones(ventana_opciones, opciones, filas, columnas, fila, columna);
 
-    // Bucle principal
     while (true) {
-        // Esperar a que el usuario presione una tecla
         int tecla = getch();
 
-        // Actualizar la posición del cursor según la tecla presionada
         switch (tecla) {
             case KEY_UP:
                 fila = (fila - 1 + filas) % filas;
@@ -50,32 +45,26 @@ void ejecutar_menu(WINDOW* ventana_opciones, const char* opciones[], int filas, 
                 columna = (columna + 1) % columnas;
                 break;
             case 10:
-                // Verificar si la opción seleccionada es válida
-                if (fila * columnas + columna < filas * columnas - 2) {
-                    // Mostrar mensaje de selección
-                    clear();
-                    mvprintw(0, 0, "Seleccionaste la opción: %s", opciones[fila * columnas + columna]);
-                    getch(); // Esperar a que el usuario presione cualquier tecla para continuar
-                    return; // Salir de la función
+                if (fila * columnas + columna < filas * columnas - 2 && strlen(opciones[fila * columnas + columna]) > 0) {
+                    return fila * columnas + columna;
                 }
                 break;
             default:
                 break;
         }
 
-        // Mostrar las opciones actualizadas
         mostrar_opciones(ventana_opciones, opciones, filas, columnas, fila, columna);
     }
 }
 
 
 int main() {
-    // Definir las opciones como un arreglo
+    // LAS OPCIONES QUE ESTEN VACIAS NO SE PODRAN SELECCIONAR
     const char* opciones[] = {
         "Opción 1", "Opción 2", "Opción 3",
         "Opción 4", "Opción 5", "Opción 6",
         "Opción 7", "Opción 8", "Opción 9",
-        "Opción 10","        ", "        "
+        "Opción 10","", ""
 
     };
 
@@ -91,8 +80,10 @@ int main() {
     refresh(); // Actualizar la pantalla
 
     // Ejecutar el menú
-    ejecutar_menu(ventana_opciones, opciones, 4, 3);
-
+ int opcionSeleccionada=  ejecutar_menu(ventana_opciones, opciones, 4, 3);
+    printw("La opcion seleccionada es: %d y la opcion %s", opcionSeleccionada, opciones[opcionSeleccionada]);
+    refresh();
+    getch();
     // Finalizar ncurses
     endwin();
 

@@ -23,19 +23,14 @@ void mostrar_opciones(WINDOW* ventana, const char* opciones[], int filas, int co
 }
 
 int ejecutar_menu(WINDOW* ventana_opciones, const char* opciones[], int filas, int columnas) {
-    // Definir variables para la posición del cursor
     int fila = 0;
     int columna = 0;
 
-    // Mostrar las opciones por primera vez
     mostrar_opciones(ventana_opciones, opciones, filas, columnas, fila, columna);
 
-    // Bucle principal
     while (true) {
-        // Esperar a que el usuario presione una tecla
         int tecla = getch();
 
-        // Actualizar la posición del cursor según la tecla presionada
         switch (tecla) {
             case KEY_UP:
                 fila = (fila - 1 + filas) % filas;
@@ -50,9 +45,7 @@ int ejecutar_menu(WINDOW* ventana_opciones, const char* opciones[], int filas, i
                 columna = (columna + 1) % columnas;
                 break;
             case 10:
-                // Verificar si la opción seleccionada es válida
-                if (fila * columnas + columna < filas * columnas - 2) {
-                    // Devolver el número de la opción seleccionada
+                if (fila * columnas + columna < filas * columnas - 2 && strlen(opciones[fila * columnas + columna]) > 0) {
                     return fila * columnas + columna;
                 }
                 break;
@@ -60,13 +53,13 @@ int ejecutar_menu(WINDOW* ventana_opciones, const char* opciones[], int filas, i
                 break;
         }
 
-        // Mostrar las opciones actualizadas
         mostrar_opciones(ventana_opciones, opciones, filas, columnas, fila, columna);
     }
 }
 
+
 int main() {
-    // Definir las opciones como un arreglo
+    // LAS OPCIONES QUE ESTEN VACIAS NO SE PODRAN SELECCIONAR
     const char* opciones[] = {
         "Opción 1", "Opción 2", "Opción 3",
         "Opción 4", "Opción 5", "Opción 6",
