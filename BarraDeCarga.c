@@ -46,7 +46,15 @@ void update_progress(WINDOW* win, int progress, int max_progress, int bar_width,
         delwin(win);
     }
 }
+void Barra(WINDOW* win,char *msg){ 
+// Actualizar el progreso de la barra
+    mvwprintw(win,1,(COLS-strlen(msg))/2,msg);
+    for (int i = 0; i <= 100; ++i) {
+        update_progress(win, i, 100, (COLS-4)-15, 5, 2);
+        usleep(100000);
+    }
 
+}
 int main()
 {
     // Inicializar ncurses
@@ -56,18 +64,16 @@ int main()
     curs_set(FALSE);
     
  
-    mvprintw(1,(COLS-6)/2,"BIENVENIDO");
     refresh();
     // Definir pares de colores
     init_pair(1, COLOR_WHITE, COLOR_BLUE);
     init_pair(2, COLOR_YELLOW, COLOR_GREEN);
     WINDOW* win = newwin(7, COLS-4, (LINES-7), 2);
+   // mvwprintw(win,1,(COLS-10)/2,"BIENVENIDO");
 
-    // Actualizar el progreso de la barra
-    for (int i = 0; i <= 100; ++i) {
-        update_progress(win, i, 100, (COLS-4)-15, 5, 2);
-        usleep(100000);
-    }
+    
+    // Dibujar la barra de carga
+    Barra(win,"BIENVENIDO");
 
     // Esperar la tecla "Enter" para salir
     mvprintw(LINES - 1, 0, "Presiona Enter para salir...");
