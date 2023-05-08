@@ -17,6 +17,13 @@ char* asciiArt[] = {
         "   > ^ <",
         NULL
 };
+ const char* Horarios[] = {
+        "Opción 1", "Opción 2", "Opción 3",
+        "Opción 4", "Opción 5", "Opción 6",
+        "Opción 7", "Opción 8", "Opción 9",
+        "Opción 10","", ""
+
+    };
 //menu
 //int n_choices = sizeof(choices) / sizeof(char *);
 void print_menu(WINDOW *menu_win, int highlight, int n_choices);
@@ -30,7 +37,7 @@ void update_progress(WINDOW* win, int progress, int max_progress, int bar_width,
 
 //Horarios
 void mostrar_opciones(WINDOW* ventana, const char* opciones[], int filas, int columnas, int fila, int columna);
-int ejecutar_menu(WINDOW* ventana_opciones, const char* opciones[], int filas, int columnas);
+int menuHorario(WINDOW* ventana_opciones, const char* opciones[], int filas, int columnas);
 
 //Confirmacion
 
@@ -57,6 +64,7 @@ int main()
   bkgd(COLOR_PAIR(1));  
   WINDOW* wBarra = newwin(7, COLS-4, (LINES-7), 2);
   Barra(wBarra,"BIENVENIDO");
+  WINDOW* wAsientos = newwin(7, 45, (LINES - 7) / 2, (COLS - 45) / 2);
 
 //             MENU
   menu_win = newwin(14,15,4,0); //parametros: alto, ancho, y, x
@@ -79,6 +87,12 @@ int main()
   }
   //MENU Horarios 
   MenuG(menu_win,frame_win);
+  
+
+  //Asientos
+ keypad (stdscr,FALSE);
+ keypad(frame_win, TRUE); 
+ int opcionSeleccionada=  menuHorario(frame_win, Horarios, 4, 3);
   clrtoeol();
   refresh();
   getch();
@@ -237,3 +251,72 @@ void Barra(WINDOW* win,char *msg){
 
 //Asientos
 //**********************************************************************************************************************
+void mostrar_opciones(WINDOW* ventana, const char* opciones[], int filas, int columnas, int fila, int columna) {
+    // Borrar la ventana y mostrar las opciones
+    wclear(ventana);
+    // Imprimir el título
+    mvwprintw(ventana, 1, (getmaxx(ventana) - 7) / 2, "Horario");
+
+    // Imprimir las opciones
+    for (int i = 0; i < filas; i++) {
+        for (int j = 0; j < columnas; j++) {
+            mvwprintw(ventana, i + 2, j * 15 + 2, opciones[i * columnas + j]);
+        }
+    }
+
+    // Resaltar la opción seleccionada
+    wattron(ventana, A_REVERSE);
+    mvwprintw(ventana, fila + 2, columna * 15 + 2, opciones[fila * columnas + columna]);
+    wattroff(ventana, A_REVERSE);
+
+    // Actualizar la ventana
+    wrefresh(ventana);
+}
+
+int menuHorario(WINDOW* ventana_opciones, const char* opciones[], int filas, int columnas) {
+    // Verificar si todos los elementos del menú están vacíos
+    bool menu_vacio = true;
+    for (int i = 0; i < filas * columnas; i++) {
+        if (strlen(opciones[i]) > 0) {
+            menu_vacio = false;
+            break;
+        }
+    }
+
+    if (menu_vacio) {
+        return -1;  // Menú vacío, retornar valor indicativo
+    }
+
+    int fila = 0;
+    int columna = 0;
+
+    mostrar_opciones(ventana_opciones, opciones, filas, columnas, fila, columna);
+
+    while (true) {
+        int tecla = getch();
+
+        switch (tecla) {
+            case KEY_UP:
+                fila = (fila - 1 + filas) % filas;
+                break;
+            case KEY_DOWN:
+                fila = (fila + 1) % filas;
+                break;
+            case KEY_LEFT:
+                columna = (columna - 1 + columnas) % columnas;
+                break;
+            case KEY_RIGHT:
+                columna = (columna + 1) % columnas;
+                break;
+            case 10:
+                if (fila * columnas + columna < filas * columnas - 2 && strlen(opciones[fila * columnas + columna]) > 0) {
+                    return fila * columnas + columna;
+                }
+                break;
+            default:
+                break;
+        }
+
+        mostrar_opciones(ventana_opciones, opciones, filas, columnas, fila, columna);
+    }
+}
