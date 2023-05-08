@@ -70,7 +70,14 @@ int main()
   wborder(frame_win, '|', '|', '-', '-', '+', '+', '+', '+');
   wrefresh(frame_win);
   refresh();
-  //MENU
+  //El ascii quedara con el de la anterior opcion titulo cambiara
+  //MENU Peliculas
+  MenuG(menu_win,frame_win);
+  for (int i = 0; i < 5; ++i)
+  {
+     choices[i]= "Hora:Hora";
+  }
+  //MENU Horarios 
   MenuG(menu_win,frame_win);
   clrtoeol();
   refresh();
