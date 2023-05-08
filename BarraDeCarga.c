@@ -4,17 +4,17 @@
 void draw_progress_bar(WINDOW* win, int progress, int max_progress, int bar_width, int bar_x, int bar_y)
 {
     // Dibujar la barra de carga vacía
-    wattron(win, COLOR_PAIR(1));
+    wattron(win, COLOR_PAIR(3));
     mvwprintw(win, bar_y, bar_x, "[");
     for (int i = 1; i < bar_width - 1; ++i) {
         mvwprintw(win, bar_y, bar_x + i, " ");
     }
     mvwprintw(win, bar_y, bar_x + bar_width - 1, "]");
-    wattroff(win, COLOR_PAIR(1));
+    wattroff(win, COLOR_PAIR(3));
 
     // Actualizar la barra de carga
     int bar_filled_width = (bar_width - 2) * progress / max_progress;
-    wattron(win, COLOR_PAIR(2));
+    wattron(win, COLOR_PAIR(4));
     mvwprintw(win, bar_y, bar_x + 1, "[");
     for (int i = 1; i < bar_filled_width + 1; ++i) {
         mvwprintw(win, bar_y, bar_x + i, "=");
@@ -22,7 +22,7 @@ void draw_progress_bar(WINDOW* win, int progress, int max_progress, int bar_widt
     for (int i = bar_filled_width + 1; i < bar_width - 1; ++i) {
         mvwprintw(win, bar_y, bar_x + i, " ");
     }
-    wattroff(win, COLOR_PAIR(2));
+    wattroff(win, COLOR_PAIR(4));
     mvwprintw(win, bar_y + 1, bar_x+bar_width/2, " %d%%", progress);
     mvwprintw(win, bar_y + 1, bar_x + bar_width - 5, " ");
     
@@ -43,7 +43,8 @@ void update_progress(WINDOW* win, int progress, int max_progress, int bar_width,
 
     // Si el progreso ha alcanzado el máximo, eliminar la ventana
     if (progress >= max_progress) {
-        delwin(win);
+        wclear(win);
+        wrefresh(win);
     }
 }
 void Barra(WINDOW* win,char *msg){ 
@@ -66,13 +67,10 @@ int main()
  
     refresh();
     // Definir pares de colores
-    init_pair(1, COLOR_WHITE, COLOR_BLUE);
-    init_pair(2, COLOR_YELLOW, COLOR_GREEN);
+    init_pair(3, COLOR_WHITE, COLOR_BLUE);
+    init_pair(4, COLOR_YELLOW, COLOR_GREEN);
     WINDOW* win = newwin(7, COLS-4, (LINES-7), 2);
-   // mvwprintw(win,1,(COLS-10)/2,"BIENVENIDO");
-
-    
-    // Dibujar la barra de carga
+    //Dibuja barra de carga
     Barra(win,"BIENVENIDO");
 
     // Esperar la tecla "Enter" para salir
