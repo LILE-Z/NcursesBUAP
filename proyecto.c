@@ -20,13 +20,21 @@ char* asciiArt[] = {
 //menu
 //int n_choices = sizeof(choices) / sizeof(char *);
 void print_menu(WINDOW *menu_win, int highlight, int n_choices);
-void MenuG(WINDOW *menu_win,WINDOW *frame_win);
+int MenuG(WINDOW *menu_win,WINDOW *frame_win);
 void printPelicula(WINDOW* win, const char* title, const char* asciiArt[]);
 
 //Barra
 void draw_progress_bar(WINDOW* win, int progress, int max_progress, int bar_width, int bar_x, int bar_y);
 void Barra(WINDOW* win,char* msg);
-void progress_bar(WINDOW* win, int progress, int max_progress, int bar_width, int bar_x, int bar_y);
+void update_progress(WINDOW* win, int progress, int max_progress, int bar_width, int bar_x, int bar_y);
+
+//Horarios
+void mostrar_opciones(WINDOW* ventana, const char* opciones[], int filas, int columnas, int fila, int columna);
+int ejecutar_menu(WINDOW* ventana_opciones, const char* opciones[], int filas, int columnas);
+
+//Confirmacion
+
+
 
 int main()
 
@@ -93,7 +101,7 @@ void print_menu(WINDOW *menu_win, int highlight, int n_choices)
     }
   wrefresh(menu_win);
 }
-void MenuG( WINDOW *menu_win,WINDOW *frame_win){
+int MenuG( WINDOW *menu_win,WINDOW *frame_win){
     int n_choices = sizeof(choices) / sizeof(char *);
    int highlight = 1; /* Resalta la primera opcion por defecto */
   int choice = 0;
@@ -136,6 +144,7 @@ void MenuG( WINDOW *menu_win,WINDOW *frame_win){
   attron(A_BOLD|A_REVERSE);
   mvprintw(2, 10, "Elegiste la opcion %d con la cadena %s\n", choice, choices[choice - 1]);
   attroff(A_BOLD|A_REVERSE);
+  return choice;
 }
 
 void printPelicula(WINDOW* win, const char* title, const char* asciiArt[]) {
@@ -214,3 +223,10 @@ void Barra(WINDOW* win,char *msg){
     }
 
 }
+//Horario
+//**********************************************************************************************************************
+
+
+
+//Asientos
+//**********************************************************************************************************************

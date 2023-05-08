@@ -13,7 +13,7 @@ char *choices[] = {
 };
 int n_choices = sizeof(choices) / sizeof(char *);
 void print_menu(WINDOW *menu_win, int highlight);
-void MenuG(WINDOW *menu_win,WINDOW *frame_win);
+int MenuG(WINDOW *menu_win,WINDOW *frame_win);
 int main()
 
 { 
@@ -51,7 +51,7 @@ int main()
   wrefresh(frame_win);
   refresh();
   //MENU
-  MenuG(menu_win,frame_win);
+ int opcion= MenuG(menu_win,frame_win);
   clrtoeol();
   refresh();
   getch();
@@ -79,47 +79,57 @@ void print_menu(WINDOW *menu_win, int highlight)
     }
   wrefresh(menu_win);
 }
-void MenuG( WINDOW *menu_win,WINDOW *frame_win){
-    int highlight = 1; /* Resalta la primera opcion por defecto */
+int MenuG(WINDOW *menu_win, WINDOW *frame_win) {
+  int highlight = 1; /* Resalta la primera opcion por defecto */
   int choice = 0;
   int c;
-     print_menu(menu_win, highlight);
-  while(1)
-    { c = wgetch(menu_win);
-      switch(c) {
-        case KEY_UP:
-          if(highlight == 1)
-            highlight = n_choices;
-          else
-            --highlight;
-          break;
-        case KEY_DOWN:
-          if(highlight == n_choices)
-            highlight = 1;
-          else
-            ++highlight;
-          break;
-        case 10:
-          choice = highlight;
-          break;
-        default:
-          mvprintw((LINES/2)+2, 0, "Caracter presionado = %3d Ojala se imprima como '%c'", c, c);
-          refresh();
-          break;
-        }
-          // Incertar info en el frame
-        wclear(frame_win);
-        mvwprintw(frame_win, 1, 1, "Opcion %d pelicula %s\n", highlight, choices[highlight - 1]);
-        wborder(frame_win, '|', '|', '-', '-', '+', '+', '+', '+');
-        wrefresh(frame_win);
-
-        if(choice != 0) /* El usuario eligio salir del bucle infinito */
-            break;
-
-        // Refresca el menu
-        print_menu(menu_win, highlight);
+  
+  print_menu(menu_win, highlight);
+  
+  while (1) {
+    c = wgetch(menu_win);
+    
+    switch (c) {
+      case KEY_UP:
+        if (highlight == 1)
+          highlight = n_choices;
+        else
+          --highlight;
+        break;
+        
+      case KEY_DOWN:
+        if (highlight == n_choices)
+          highlight = 1;
+        else
+          ++highlight;
+        break;
+        
+      case 10:
+        choice = highlight;
+        break;
+        
+      default:
+        mvprintw((LINES / 2) + 2, 0, "Caracter presionado = %3d Ojala se imprima como '%c'", c, c);
+        refresh();
+        break;
     }
-  attron(A_BOLD|A_REVERSE);
+    
+    // Insertar info en el frame
+    wclear(frame_win);
+    mvwprintw(frame_win, 1, 1, "Opcion %d pelicula %s\n", highlight, choices[highlight - 1]);
+    wborder(frame_win, '|', '|', '-', '-', '+', '+', '+', '+');
+    wrefresh(frame_win);
+    
+    if (choice != 0) /* El usuario eligio salir del bucle infinito */
+      break;
+    
+    // Refresca el menu
+    print_menu(menu_win, highlight);
+  }
+  
+  attron(A_BOLD | A_REVERSE);
   mvprintw(2, 10, "Elegiste la opcion %d con la cadena %s\n", choice, choices[choice - 1]);
-  attroff(A_BOLD|A_REVERSE);
+  attroff(A_BOLD | A_REVERSE);
+  
+  return choice;
 }
