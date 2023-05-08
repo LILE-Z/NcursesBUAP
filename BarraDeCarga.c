@@ -1,6 +1,35 @@
 #include <ncurses.h>
 #include <unistd.h>
 
+void draw_progress_bar(WINDOW* win, int progress, int max_progress, int bar_width, int bar_x, int bar_y);
+void Barra(WINDOW* win,char* msg);
+void progress_bar(WINDOW* win, int progress, int max_progress, int bar_width, int bar_x, int bar_y);
+int main()
+{
+    // Inicializar ncurses
+    initscr();
+    start_color();
+    noecho();
+    curs_set(FALSE);
+    
+ 
+    refresh();
+    // Definir pares de colores
+    init_pair(3, COLOR_WHITE, COLOR_BLUE);
+    init_pair(4, COLOR_YELLOW, COLOR_GREEN);
+    WINDOW* win = newwin(7, COLS-4, (LINES-7), 2);
+    //Dibuja barra de carga
+    Barra(win,"BIENVENIDO");
+
+    // Esperar la tecla "Enter" para salir
+    mvprintw(LINES - 1, 0, "Presiona Enter para salir...");
+    refresh();
+    getch();
+
+    // Limpiar y salir
+    endwin();
+    return 0;
+}
 void draw_progress_bar(WINDOW* win, int progress, int max_progress, int bar_width, int bar_x, int bar_y)
 {
     // Dibujar la barra de carga vacía
@@ -55,30 +84,4 @@ void Barra(WINDOW* win,char *msg){
         usleep(100000);
     }
 
-}
-int main()
-{
-    // Inicializar ncurses
-    initscr();
-    start_color();
-    noecho();
-    curs_set(FALSE);
-    
- 
-    refresh();
-    // Definir pares de colores
-    init_pair(3, COLOR_WHITE, COLOR_BLUE);
-    init_pair(4, COLOR_YELLOW, COLOR_GREEN);
-    WINDOW* win = newwin(7, COLS-4, (LINES-7), 2);
-    //Dibuja barra de carga
-    Barra(win,"BIENVENIDO");
-
-    // Esperar la tecla "Enter" para salir
-    mvprintw(LINES - 1, 0, "Presiona Enter para salir...");
-    refresh();
-    getch();
-
-    // Limpiar y salir
-    endwin();
-    return 0;
 }
