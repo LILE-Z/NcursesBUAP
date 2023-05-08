@@ -1,5 +1,37 @@
 #include <ncurses.h>
+void mostrar_opciones(WINDOW* ventana, const char* opciones[], int filas, int columnas, int fila, int columna);
+int ejecutar_menu(WINDOW* ventana_opciones, const char* opciones[], int filas, int columnas);
+int main() {
+    // LAS OPCIONES QUE ESTEN VACIAS NO SE PODRAN SELECCIONAR
+    const char* Horarios[] = {
+        "Opción 1", "Opción 2", "Opción 3",
+        "Opción 4", "Opción 5", "Opción 6",
+        "Opción 7", "Opción 8", "Opción 9",
+        "Opción 10","", ""
 
+    };
+
+    // Inicializar ncurses
+    initscr();
+    cbreak();
+    noecho();
+    keypad(stdscr, TRUE);
+
+    // Crear la ventana para mostrar las opciones
+    WINDOW* ventana_opciones = newwin(7, 45, (LINES - 7) / 2, (COLS - 45) / 2);
+    
+    refresh(); // Actualizar la pantalla
+
+    // Ejecutar el menú
+ int opcionSeleccionada=  ejecutar_menu(ventana_opciones, Horarios, 4, 3);
+    printw("La opcion seleccionada es: %d y la opcion %s", opcionSeleccionada, Horarios[opcionSeleccionada]);
+    refresh();
+    getch();
+    // Finalizar ncurses
+    endwin();
+
+    return 0;
+}
 void mostrar_opciones(WINDOW* ventana, const char* opciones[], int filas, int columnas, int fila, int columna) {
     // Borrar la ventana y mostrar las opciones
     wclear(ventana);
@@ -68,37 +100,4 @@ int ejecutar_menu(WINDOW* ventana_opciones, const char* opciones[], int filas, i
 
         mostrar_opciones(ventana_opciones, opciones, filas, columnas, fila, columna);
     }
-}
-
-
-int main() {
-    // LAS OPCIONES QUE ESTEN VACIAS NO SE PODRAN SELECCIONAR
-    const char* opciones[] = {
-        "Opción 1", "Opción 2", "Opción 3",
-        "Opción 4", "Opción 5", "Opción 6",
-        "Opción 7", "Opción 8", "Opción 9",
-        "Opción 10","", ""
-
-    };
-
-    // Inicializar ncurses
-    initscr();
-    cbreak();
-    noecho();
-    keypad(stdscr, TRUE);
-
-    // Crear la ventana para mostrar las opciones
-    WINDOW* ventana_opciones = newwin(7, 45, (LINES - 7) / 2, (COLS - 45) / 2);
-    
-    refresh(); // Actualizar la pantalla
-
-    // Ejecutar el menú
- int opcionSeleccionada=  ejecutar_menu(ventana_opciones, opciones, 4, 3);
-    printw("La opcion seleccionada es: %d y la opcion %s", opcionSeleccionada, opciones[opcionSeleccionada]);
-    refresh();
-    getch();
-    // Finalizar ncurses
-    endwin();
-
-    return 0;
 }
