@@ -17,9 +17,9 @@ int main()
     // Definir pares de colores
     init_pair(3, COLOR_WHITE, COLOR_BLUE);
     init_pair(4, COLOR_YELLOW, COLOR_GREEN);
-    WINDOW* win = newwin(7, COLS-4, (LINES-7), 2);
+    WINDOW* wBarra = newwin(7, COLS-4, (LINES-7), 2);
     //Dibuja barra de carga
-    Barra(win,"BIENVENIDO");
+    Barra(wBarra,"BIENVENIDO");
 
     // Esperar la tecla "Enter" para salir
     mvprintw(LINES - 1, 0, "Presiona Enter para salir...");

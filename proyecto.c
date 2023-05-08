@@ -17,10 +17,17 @@ char* asciiArt[] = {
         "   > ^ <",
         NULL
 };
-int n_choices = sizeof(choices) / sizeof(char *);
-void print_menu(WINDOW *menu_win, int highlight);
+//menu
+//int n_choices = sizeof(choices) / sizeof(char *);
+void print_menu(WINDOW *menu_win, int highlight, int n_choices);
 void MenuG(WINDOW *menu_win,WINDOW *frame_win);
 void printPelicula(WINDOW* win, const char* title, const char* asciiArt[]);
+
+//Barra
+void draw_progress_bar(WINDOW* win, int progress, int max_progress, int bar_width, int bar_x, int bar_y);
+void Barra(WINDOW* win,char* msg);
+void progress_bar(WINDOW* win, int progress, int max_progress, int bar_width, int bar_x, int bar_y);
+
 int main()
 
 { 
@@ -36,14 +43,12 @@ int main()
   // Colores
   init_pair(1, COLOR_RED, COLOR_BLACK);
   init_pair(2, COLOR_CYAN, COLOR_BLACK);
+  init_pair(3, COLOR_WHITE, COLOR_BLUE);
+  init_pair(4, COLOR_YELLOW, COLOR_GREEN);
+    //Dibuja barra de carga
   bkgd(COLOR_PAIR(1));  
-  //Centers the window
-  centerx = COLS/2;
-  centery= LINES/2;
-  //window dimensions
-  height = LINES/2;
-  width = COLS/2;
-  //creating windows
+  WINDOW* wBarra = newwin(7, COLS-4, (LINES-7), 2);
+  Barra(wBarra,"BIENVENIDO");
 
 //             MENU
   menu_win = newwin(14,15,4,0); //parametros: alto, ancho, y, x
@@ -68,9 +73,8 @@ int main()
 
 ///FUNCIONES
 //**********************************************************************************************************************
-void print_menu(WINDOW *menu_win, int highlight)
-{
-  int x, y, i;
+void print_menu(WINDOW *menu_win, int highlight, int n_choices)
+{ int x, y, i;
   x = 2;
   y = 3;
   wborder(menu_win, '|', '|', '-', '-', '+', '+', '+', '+');
@@ -90,10 +94,11 @@ void print_menu(WINDOW *menu_win, int highlight)
   wrefresh(menu_win);
 }
 void MenuG( WINDOW *menu_win,WINDOW *frame_win){
-    int highlight = 1; /* Resalta la primera opcion por defecto */
+    int n_choices = sizeof(choices) / sizeof(char *);
+   int highlight = 1; /* Resalta la primera opcion por defecto */
   int choice = 0;
   int c;
-     print_menu(menu_win, highlight);
+     print_menu(menu_win, highlight,n_choices);
   while(1)
     { c = wgetch(menu_win);
       switch(c) {
@@ -126,7 +131,7 @@ void MenuG( WINDOW *menu_win,WINDOW *frame_win){
             break;
 
         // Refresca el menu
-        print_menu(menu_win, highlight);
+        print_menu(menu_win, highlight,n_choices);
     }
   attron(A_BOLD|A_REVERSE);
   mvprintw(2, 10, "Elegiste la opcion %d con la cadena %s\n", choice, choices[choice - 1]);
@@ -152,3 +157,60 @@ void printPelicula(WINDOW* win, const char* title, const char* asciiArt[]) {
     wrefresh(win);
 }
 
+//Barra
+//**********************************************************************************************************************
+void draw_progress_bar(WINDOW* win, int progress, int max_progress, int bar_width, int bar_x, int bar_y)
+{
+    // Dibujar la barra de carga vacía
+    wattron(win, COLOR_PAIR(3));
+    mvwprintw(win, bar_y, bar_x, "[");
+    for (int i = 1; i < bar_width - 1; ++i) {
+        mvwprintw(win, bar_y, bar_x + i, " ");
+    }
+    mvwprintw(win, bar_y, bar_x + bar_width - 1, "]");
+    wattroff(win, COLOR_PAIR(3));
+
+    // Actualizar la barra de carga
+    int bar_filled_width = (bar_width - 2) * progress / max_progress;
+    wattron(win, COLOR_PAIR(4));
+    mvwprintw(win, bar_y, bar_x + 1, "[");
+    for (int i = 1; i < bar_filled_width + 1; ++i) {
+        mvwprintw(win, bar_y, bar_x + i, "=");
+    }
+    for (int i = bar_filled_width + 1; i < bar_width - 1; ++i) {
+        mvwprintw(win, bar_y, bar_x + i, " ");
+    }
+    wattroff(win, COLOR_PAIR(4));
+    mvwprintw(win, bar_y + 1, bar_x+bar_width/2, " %d%%", progress);
+    mvwprintw(win, bar_y + 1, bar_x + bar_width - 5, " ");
+    
+
+    // Refrescar la ventana
+    wrefresh(win);
+}
+
+void update_progress(WINDOW* win, int progress, int max_progress, int bar_width, int bar_x, int bar_y)
+{
+    // Actualizar el progreso
+    if (progress > max_progress) {
+        progress = max_progress;
+    }
+
+    // Dibujar la barra de carga
+    draw_progress_bar(win, progress, max_progress, bar_width, bar_x, bar_y);
+
+    // Si el progreso ha alcanzado el máximo, eliminar la ventana
+    if (progress >= max_progress) {
+        wclear(win);
+        wrefresh(win);
+    }
+}
+void Barra(WINDOW* win,char *msg){ 
+// Actualizar el progreso de la barra
+    mvwprintw(win,1,(COLS-strlen(msg))/2,msg);
+    for (int i = 0; i <= 100; ++i) {
+        update_progress(win, i, 100, (COLS-4)-15, 5, 2);
+        usleep(100000);
+    }
+
+}
