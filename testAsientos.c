@@ -1,9 +1,9 @@
 #include <ncurses.h>
 void mostrar_opciones(WINDOW* ventana, const char* opciones[], int filas, int columnas, int fila, int columna);
-int ejecutar_menu(WINDOW* ventana_opciones, const char* opciones[], int filas, int columnas);
+int menuAsientos(WINDOW* ventana_opciones, const char* opciones[], int filas, int columnas);
 int main() {
     // LAS OPCIONES QUE ESTEN VACIAS NO SE PODRAN SELECCIONAR
-    const char* Horarios[] = {
+    const char* Asientos[] = {
         "Opción 1", "Opción 2", "Opción 3",
         "Opción 4", "Opción 5", "Opción 6",
         "Opción 7", "Opción 8", "Opción 9",
@@ -18,13 +18,13 @@ int main() {
     keypad(stdscr, TRUE);
 
     // Crear la ventana para mostrar las opciones
-    WINDOW* ventana_opciones = newwin(7, 45, (LINES - 7) / 2, (COLS - 45) / 2);
+    WINDOW* wAsientos = newwin(7, 45, (LINES - 7) / 2, (COLS - 45) / 2);
     
     refresh(); // Actualizar la pantalla
 
     // Ejecutar el menú
- int opcionSeleccionada=  ejecutar_menu(ventana_opciones, Horarios, 4, 3);
-    printw("La opcion seleccionada es: %d y la opcion %s", opcionSeleccionada, Horarios[opcionSeleccionada]);
+ int opcionSeleccionada=  menuAsientos(wAsientos, Asientos, 4, 3);
+    printw("La opcion seleccionada es: %d y la opcion %s", opcionSeleccionada, Asientos[opcionSeleccionada]);
     refresh();
     getch();
     // Finalizar ncurses
@@ -54,7 +54,7 @@ void mostrar_opciones(WINDOW* ventana, const char* opciones[], int filas, int co
     wrefresh(ventana);
 }
 
-int ejecutar_menu(WINDOW* ventana_opciones, const char* opciones[], int filas, int columnas) {
+int menuAsientos(WINDOW* ventana_opciones, const char* opciones[], int filas, int columnas) {
     // Verificar si todos los elementos del menú están vacíos
     bool menu_vacio = true;
     for (int i = 0; i < filas * columnas; i++) {
