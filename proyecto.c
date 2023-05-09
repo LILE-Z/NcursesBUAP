@@ -82,12 +82,19 @@ int main()
   //Frame 
   frame_win = newwin(LINES-4,COLS-16,4,16); //parametros: alto, ancho, y, x
   wbkgd(frame_win, COLOR_PAIR(2));
-  wborder(frame_win, '|', '|', '-', '-', '+', '+', '+', '+');
+  //wborder(frame_win, '|', '|', '-', '-', '+', '+', '+', '+');
   wrefresh(frame_win);
   refresh();
   //El ascii quedara con el de la anterior opcion titulo cambiara
+  
+ 
+ //Gestiona menu de peliculas
+  while (1)
+  { 
+    clear();
+    refresh();
   //MENU Peliculas
-  MenuG(menu_win,frame_win);
+   MenuG(menu_win,frame_win);
   for (int i = 0; i < 5; ++i)
   {
      choices[i]= "Hora:Hora";
@@ -104,7 +111,12 @@ int main()
  // printw("La opcion seleccionada es: %d y la opcion %s", opcionSeleccionada, Asientos[opcionSeleccionada]);
   //Confirmacion de si desea agregar mas asientos
   //Confirmacion de si desea otra pelicula
-  confirmacionA = confirmation_box(confirmationW,"Desea agregar mas asientos?");
+  confirmacionP = confirmation_box(confirmationW,"Desea regresar al menu?");  
+    if(confirmacionP==0) {
+      break;
+    }
+  }
+  
   clrtoeol();
   refresh();
   getch();
@@ -139,6 +151,8 @@ int MenuG( WINDOW *menu_win,WINDOW *frame_win){
    int highlight = 1; /* Resalta la primera opcion por defecto */
   int choice = 0;
   int c;
+  
+  wborder(frame_win, '|', '|', '-', '-', '+', '+', '+', '+');
      print_menu(menu_win, highlight,n_choices);
   while(1)
     { c = wgetch(menu_win);
