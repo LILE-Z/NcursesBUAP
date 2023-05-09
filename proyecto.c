@@ -45,7 +45,8 @@ int confirmation_box(WINDOW* win);
 int main()
 
 { 
-  
+  int confirmacionA=0,confirmacionP=0;
+  int opcionSeleccionada=0;
   WINDOW *menu_win,*frame_win;
   //initiate ncurses
   initscr();
@@ -65,8 +66,8 @@ int main()
   WINDOW* wBarra = newwin(7, COLS-4, (LINES-7), 2);
   Barra(wBarra,"BIENVENIDO");
   WINDOW* wAsientos = newwin(7, 45, (LINES - 7) / 2, (COLS - 45) / 2);
-  
-  WINDOW* confirmationW = newwin(10, 30, 4, 2); //parameters: height, width, y, x
+  wbkgd(wAsientos, COLOR_PAIR(2));
+  WINDOW* confirmationW = newwin(10, 30, (LINES-10)/2, (COLS-30)/2); //parameters: height, width, y, x
   wbkgd(confirmationW,COLOR_PAIR(3));
   box(confirmationW, 0, 0);
   keypad(confirmationW, TRUE);
@@ -98,11 +99,30 @@ int main()
 // wrefresh(menu_win);
   //Asientos
   wmove(wAsientos, 0, 0);
-  int opcionSeleccionada=  menuAsientos(wAsientos, Asientos, 4, 3);
+   opcionSeleccionada=  menuAsientos(wAsientos, Asientos, 4, 3);
+   printw("La opcion seleccionada es: %d y la opcion %s", opcionSeleccionada, Asientos[opcionSeleccionada]);
  // printw("La opcion seleccionada es: %d y la opcion %s", opcionSeleccionada, Asientos[opcionSeleccionada]);
-  //Confirmacion
-  int confirmacion = confirmation_box(confirmationW);
-  
+  //Confirmacion de si desea agregar mas asientos
+  //Confirmacion de si desea otra pelicula
+  confirmacionA = confirmation_box(confirmationW);
+  if (confirmacionA== 1){
+   opcionSeleccionada=  menuAsientos(wAsientos, Asientos, 4, 3);
+   printw("La opcion seleccionada es: %d y la opcion %s", opcionSeleccionada, Asientos[opcionSeleccionada]);
+  }else {
+    clear();
+    //break;
+  };
+  clear();
+  refresh();
+  confirmacionP = confirmation_box(confirmationW);
+  if (confirmacionP== 1){
+   clear();
+   refresh();
+   MenuG(menu_win,frame_win);
+  }else {
+    clear();
+    //break;
+  };
   clrtoeol();
   refresh();
   getch();
