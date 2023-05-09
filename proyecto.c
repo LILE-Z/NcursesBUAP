@@ -40,7 +40,7 @@ void mostrar_opciones(WINDOW* ventana, const char* opciones[], int filas, int co
 int menuAsientos(WINDOW* ventana_opciones, const char* opciones[], int filas, int columnas);
 
 //Confirmacion
-int confirmation_box(WINDOW* win);
+int confirmation_box(WINDOW* win,char* msg);
 
 int main()
 
@@ -104,25 +104,7 @@ int main()
  // printw("La opcion seleccionada es: %d y la opcion %s", opcionSeleccionada, Asientos[opcionSeleccionada]);
   //Confirmacion de si desea agregar mas asientos
   //Confirmacion de si desea otra pelicula
-  confirmacionA = confirmation_box(confirmationW);
-  if (confirmacionA== 1){
-   opcionSeleccionada=  menuAsientos(wAsientos, Asientos, 4, 3);
-   printw("La opcion seleccionada es: %d y la opcion %s", opcionSeleccionada, Asientos[opcionSeleccionada]);
-  }else {
-    clear();
-    //break;
-  };
-  clear();
-  refresh();
-  confirmacionP = confirmation_box(confirmationW);
-  if (confirmacionP== 1){
-   clear();
-   refresh();
-   MenuG(menu_win,frame_win);
-  }else {
-    clear();
-    //break;
-  };
+  confirmacionA = confirmation_box(confirmationW,"Desea agregar mas asientos?");
   clrtoeol();
   refresh();
   getch();
@@ -352,11 +334,11 @@ int menuAsientos(WINDOW* ventana_opciones, const char* opciones[], int filas, in
 }
 // Confiramción
 //**********************************************************************************************************************
-int confirmation_box(WINDOW* win) {
+int confirmation_box(WINDOW* win,char *msg) {
     int highlight = 1;
     int choice;
 
-    mvwprintw(win, 1, 2, "¿Desea continuar?");
+    mvwprintw(win, 1, 2,msg);
     mvwprintw(win, 3, 2, "Sí");
     mvwprintw(win, 3, 6, "No");
 
