@@ -40,8 +40,7 @@ void mostrar_opciones(WINDOW* ventana, const char* opciones[], int filas, int co
 int menuAsientos(WINDOW* ventana_opciones, const char* opciones[], int filas, int columnas);
 
 //Confirmacion
-
-
+int confirmation_box(WINDOW* win);
 
 int main()
 
@@ -66,6 +65,13 @@ int main()
   WINDOW* wBarra = newwin(7, COLS-4, (LINES-7), 2);
   Barra(wBarra,"BIENVENIDO");
   WINDOW* wAsientos = newwin(7, 45, (LINES - 7) / 2, (COLS - 45) / 2);
+  
+  WINDOW* confirmationW = newwin(10, 30, 4, 2); //parameters: height, width, y, x
+  wbkgd(confirmationW,COLOR_PAIR(3));
+  box(confirmationW, 0, 0);
+  keypad(confirmationW, TRUE);
+  
+  //keypad(confirmationW, TRUE);
 //             MENU
   menu_win = newwin(14,15,4,0); //parametros: alto, ancho, y, x
   wbkgd(menu_win, COLOR_PAIR(2));
@@ -93,7 +99,10 @@ int main()
   //Asientos
   wmove(wAsientos, 0, 0);
   int opcionSeleccionada=  menuAsientos(wAsientos, Asientos, 4, 3);
-  //printw("La opcion seleccionada es: %d y la opcion %s", opcionSeleccionada, Asientos[opcionSeleccionada]);
+ // printw("La opcion seleccionada es: %d y la opcion %s", opcionSeleccionada, Asientos[opcionSeleccionada]);
+  //Confirmacion
+  int confirmacion = confirmation_box(confirmationW);
+  
   clrtoeol();
   refresh();
   getch();
@@ -109,7 +118,7 @@ void print_menu(WINDOW *menu_win, int highlight, int n_choices)
   y = 3;
   wborder(menu_win, '|', '|', '-', '-', '+', '+', '+', '+');
   mvwprintw(menu_win, 1, 5, "MENU");
-  mvwchgat(menu_win, 1, 5, 5, A_BOLD, 1, NULL);  //parametros: ventana, y, x, largo, atributos, color, NULL
+  mvwchgat(menu_win, 1, 5, 4, A_BOLD, 4, NULL);  //parametros: ventana, y, x, largo, atributos, color, NULL
 
   for(i = 0; i < n_choices; ++i)
     {   if(highlight == i + 1) /* Resalta lo opcion actual */
@@ -319,5 +328,62 @@ int menuAsientos(WINDOW* ventana_opciones, const char* opciones[], int filas, in
         }
 
         mostrar_opciones(ventana_opciones, opciones, filas, columnas, fila, columna);
+    }
+}
+// Confiramción
+//**********************************************************************************************************************
+int confirmation_box(WINDOW* win) {
+    int highlight = 1;
+    int choice;
+
+    mvwprintw(win, 1, 2, "¿Desea continuar?");
+    mvwprintw(win, 3, 2, "Sí");
+    mvwprintw(win, 3, 6, "No");
+
+    while (1) {
+        if (highlight == 1) {
+            wattron(win, A_REVERSE);
+            mvwprintw(win, 3, 2, "Sí");
+            wattroff(win, A_REVERSE);
+        } else {
+            mvwprintw(win, 3, 2, "Sí");
+        }
+
+        if (highlight == 2) {
+            wattron(win, A_REVERSE);
+            mvwprintw(win, 3, 6, "No");
+            wattroff(win, A_REVERSE);
+        } else {
+            mvwprintw(win, 3, 6, "No");
+        }
+
+        choice = wgetch(win);
+
+        switch (choice) {
+            case KEY_LEFT:
+                highlight--;
+                if (highlight == 0) {
+                    highlight = 1;
+                }
+                break;
+            case KEY_RIGHT:
+                highlight++;
+                if (highlight == 3) {
+                    highlight = 2;
+                }
+                break;
+            default:
+                break;
+        }
+
+        if (choice == 10) {
+            break;
+        }
+    }
+
+    if (highlight == 1) {
+        return 1;
+    } else {
+        return 0;
     }
 }
