@@ -1,4 +1,35 @@
 #include <ncurses.h>
+int confirmation_box(WINDOW* win);
+int main() {
+    initscr();
+    clear();
+    noecho();
+    cbreak();
+    keypad(stdscr, TRUE);
+    start_color();
+    init_pair(3, COLOR_WHITE, COLOR_BLUE);
+    WINDOW* confirmationW = newwin(10, 30, 4, 2); //parameters: height, width, y, x
+    wbkgd(confirmationW,COLOR_PAIR(3));
+    box(confirmationW, 0, 0);
+    keypad(confirmationW, TRUE);
+    refresh();
+    wrefresh(confirmationW);
+
+    int choice = confirmation_box(confirmationW);
+
+    if (choice == 1) {
+        mvwprintw(confirmationW, 2, 1, "Sí");
+    } else {
+        mvwprintw(confirmationW, 2, 1, "No");
+    }
+    wrefresh(confirmationW);
+    refresh();
+    getch();
+    endwin();
+
+    return 0;
+}
+
 int confirmation_box(WINDOW* win) {
     int highlight = 1;
     int choice;
@@ -53,33 +84,4 @@ int confirmation_box(WINDOW* win) {
     } else {
         return 0;
     }
-}
-int main() {
-    initscr();
-    clear();
-    noecho();
-    cbreak();
-    keypad(stdscr, TRUE);
-    start_color();
-    init_pair(1, COLOR_WHITE, COLOR_BLUE);
-    WINDOW* confirmationW = newwin(10, 30, 4, 2); //parameters: height, width, y, x
-    wbkgd(confirmationW,COLOR_PAIR(1));
-    box(confirmationW, 0, 0);
-    keypad(confirmationW, TRUE);
-    refresh();
-    wrefresh(confirmationW);
-
-    int choice = confirmation_box(confirmationW);
-
-    if (choice == 1) {
-        mvwprintw(confirmationW, 2, 1, "Sí");
-    } else {
-        mvwprintw(confirmationW, 2, 1, "No");
-    }
-    wrefresh(confirmationW);
-    refresh();
-    getch();
-    endwin();
-
-    return 0;
 }
