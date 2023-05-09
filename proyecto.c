@@ -17,7 +17,7 @@ char* asciiArt[] = {
         "   > ^ <",
         NULL
 };
- const char* Horarios[] = {
+ const char* Asientos[] = {
         "Opción 1", "Opción 2", "Opción 3",
         "Opción 4", "Opción 5", "Opción 6",
         "Opción 7", "Opción 8", "Opción 9",
@@ -37,7 +37,7 @@ void update_progress(WINDOW* win, int progress, int max_progress, int bar_width,
 
 //Horarios
 void mostrar_opciones(WINDOW* ventana, const char* opciones[], int filas, int columnas, int fila, int columna);
-int menuHorario(WINDOW* ventana_opciones, const char* opciones[], int filas, int columnas);
+int menuAsientos(WINDOW* ventana_opciones, const char* opciones[], int filas, int columnas);
 
 //Confirmacion
 
@@ -55,6 +55,7 @@ int main()
   cbreak();
   curs_set(0);
   start_color();
+  keypad(stdscr, TRUE);
   // Colores
   init_pair(1, COLOR_RED, COLOR_BLACK);
   init_pair(2, COLOR_CYAN, COLOR_BLACK);
@@ -65,7 +66,6 @@ int main()
   WINDOW* wBarra = newwin(7, COLS-4, (LINES-7), 2);
   Barra(wBarra,"BIENVENIDO");
   WINDOW* wAsientos = newwin(7, 45, (LINES - 7) / 2, (COLS - 45) / 2);
-
 //             MENU
   menu_win = newwin(14,15,4,0); //parametros: alto, ancho, y, x
   wbkgd(menu_win, COLOR_PAIR(2));
@@ -88,11 +88,12 @@ int main()
   //MENU Horarios 
   MenuG(menu_win,frame_win);
   
-
+ //werase(menu_win);
+// wrefresh(menu_win);
   //Asientos
- keypad (stdscr,FALSE);
- keypad(frame_win, TRUE); 
- int opcionSeleccionada=  menuHorario(frame_win, Horarios, 4, 3);
+  wmove(wAsientos, 0, 0);
+  int opcionSeleccionada=  menuAsientos(wAsientos, Asientos, 4, 3);
+  //printw("La opcion seleccionada es: %d y la opcion %s", opcionSeleccionada, Asientos[opcionSeleccionada]);
   clrtoeol();
   refresh();
   getch();
@@ -240,7 +241,7 @@ void Barra(WINDOW* win,char *msg){
     mvwprintw(win,1,(COLS-strlen(msg))/2,msg);
     for (int i = 0; i <= 100; ++i) {
         update_progress(win, i, 100, (COLS-4)-15, 5, 2);
-        usleep(100000);
+        usleep(1000);
     }
 
 }
@@ -273,7 +274,7 @@ void mostrar_opciones(WINDOW* ventana, const char* opciones[], int filas, int co
     wrefresh(ventana);
 }
 
-int menuHorario(WINDOW* ventana_opciones, const char* opciones[], int filas, int columnas) {
+int menuAsientos(WINDOW* ventana_opciones, const char* opciones[], int filas, int columnas) {
     // Verificar si todos los elementos del menú están vacíos
     bool menu_vacio = true;
     for (int i = 0; i < filas * columnas; i++) {
