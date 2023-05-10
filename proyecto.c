@@ -104,10 +104,25 @@ int main()
   
  //werase(menu_win);
 // wrefresh(menu_win);
+// second loop   
+ while (1)
+  {
+    wclear(wAsientos);
   //Asientos
   wmove(wAsientos, 0, 0);
    opcionSeleccionada=  menuAsientos(wAsientos, Asientos, 4, 3);
    printw("La opcion seleccionada es: %d y la opcion %s", opcionSeleccionada, Asientos[opcionSeleccionada]);
+  
+  //Confirmacion de si desea agregar mas asientos
+  confirmacionA = confirmation_box(confirmationW,"Desea agregar mas asientos?");  
+    if(confirmacionA==0) {
+      break;
+    }
+ 
+  }
+
+
+ wclear(confirmationW);
  // printw("La opcion seleccionada es: %d y la opcion %s", opcionSeleccionada, Asientos[opcionSeleccionada]);
   //Confirmacion de si desea agregar mas asientos
   //Confirmacion de si desea otra pelicula
@@ -116,7 +131,7 @@ int main()
       break;
     }
   }
-  
+ 
   clrtoeol();
   refresh();
   getch();
