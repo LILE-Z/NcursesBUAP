@@ -78,7 +78,6 @@ int main()
   menu_win = newwin(14,15,4,0); //parametros: alto, ancho, y, x
   wbkgd(menu_win, COLOR_PAIR(2));
   keypad(menu_win, TRUE);
-  mvprintw(0, 0, "Utilice las flechas para ir arriba y abajo, Presione enter para elegir");
   refresh();
   //Frame 
   frame_win = newwin(LINES-4,COLS-16,4,16); //parametros: alto, ancho, y, x
@@ -93,8 +92,10 @@ int main()
   while (1)
   { 
     clear();
+  printw( "Utilice las flechas para ir arriba y abajo, Presione enter para elegir"); //paraetros y,x, texto
     refresh();
   //MENU Peliculas
+  pelicula[0]='\0';
   strcpy( pelicula,choices[MenuG(menu_win,frame_win)]);
    werase(menu_win);
   for (int i = 0; i < 5; ++i)

@@ -17,14 +17,13 @@ void print_array(WINDOW *window, char *array[], int size) {
 
 int main() {
   WINDOW *window;
-  char *array[] = {
+  char *reciboM[] = {
     "Texto 1",
     "Texto 2",
     "Texto 3",
     "Texto 4",
     "Texto 5"
   };
-  int size = sizeof(array) / sizeof(char *);
   
   initscr();
   raw();
@@ -36,7 +35,7 @@ int main() {
   box(window, 0, 0);
   refresh(); 
   // Imprimir el arreglo y las líneas horizontales en la ventana
-  print_array(window, array, size);
+  print_array(window, reciboM, sizeof(reciboM) / sizeof(char *));
   
   wrefresh(window);
   
