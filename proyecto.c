@@ -17,7 +17,7 @@ char* asciiArt[] = {
         "   > ^ <",
         NULL
 };
- const char* Asientos[] = {
+   char* Asientos[] = {
         "Opción 1", "Opción 2", "Opción 3",
         "Opción 4", "Opción 5", "Opción 6",
         "Opción 7", "Opción 8", "Opción 9",
@@ -28,7 +28,7 @@ char* asciiArt[] = {
 //int n_choices = sizeof(choices) / sizeof(char *);
 void print_menu(WINDOW *menu_win, int highlight, int n_choices);
 int MenuG(WINDOW *menu_win,WINDOW *frame_win);
-void printPelicula(WINDOW* win, const char* title, const char* asciiArt[]);
+void printPelicula(WINDOW* win,  char* title,  char* asciiArt[]);
 
 //Barra
 void draw_progress_bar(WINDOW* win, int progress, int max_progress, int bar_width, int bar_x, int bar_y);
@@ -36,8 +36,8 @@ void Barra(WINDOW* win,char* msg);
 void update_progress(WINDOW* win, int progress, int max_progress, int bar_width, int bar_x, int bar_y);
 
 //Horarios
-void mostrar_opciones(WINDOW* ventana, const char* opciones[], int filas, int columnas, int fila, int columna);
-int menuAsientos(WINDOW* ventana_opciones, const char* opciones[], int filas, int columnas);
+void mostrar_opciones(WINDOW* ventana,char* opciones[], int filas, int columnas, int fila, int columna);
+int menuAsientos(WINDOW* ventana_opciones, char* opciones[], int filas, int columnas);
 
 //Confirmacion
 int confirmation_box(WINDOW* win,char* msg);
@@ -45,8 +45,9 @@ int confirmation_box(WINDOW* win,char* msg);
 int main()
 
 { 
-  int confirmacionA=0,confirmacionP=0;
+  int confirmacionA=0,confirmacionP=0,contadorG=0,contadorL=0;
   int opcionSeleccionada=0;
+  char pelicula[30]="";
   WINDOW *menu_win,*frame_win;
   //initiate ncurses
   initscr();
@@ -94,21 +95,23 @@ int main()
     clear();
     refresh();
   //MENU Peliculas
-   MenuG(menu_win,frame_win);
+  strcpy( pelicula,choices[MenuG(menu_win,frame_win)]);
+   werase(menu_win);
   for (int i = 0; i < 5; ++i)
   {
      choices[i]= "Hora:Hora";
   }
   //MENU Horarios 
   MenuG(menu_win,frame_win);
-  
  //werase(menu_win);
 // wrefresh(menu_win);
-// second loop   
+// second loop  
+ contadorL=0; //selecciono un asiento en un misma pelicula
  while (1)
   { wclear(confirmationW);
     wclear(wAsientos);
   //Asientos
+  contadorL++;
   wmove(wAsientos, 0, 0);
    opcionSeleccionada=  menuAsientos(wAsientos, Asientos, 4, 3);
    printw("La opcion seleccionada es: %d y la opcion %s", opcionSeleccionada, Asientos[opcionSeleccionada]);
@@ -120,8 +123,7 @@ int main()
     }
  
   }
-
-
+  contadorG+=contadorL;
  wclear(confirmationW);
  // printw("La opcion seleccionada es: %d y la opcion %s", opcionSeleccionada, Asientos[opcionSeleccionada]);
   //Confirmacion de si desea agregar mas asientos
@@ -131,7 +133,10 @@ int main()
       break;
     }
   }
- 
+  clear();
+  refresh();
+  printw("%d",contadorG);
+  printw("PELICULA: %s",pelicula);
   clrtoeol();
   refresh();
   getch();
@@ -209,7 +214,7 @@ int MenuG( WINDOW *menu_win,WINDOW *frame_win){
   return choice;
 }
 
-void printPelicula(WINDOW* win, const char* title, const char* asciiArt[]) {
+void printPelicula(WINDOW* win, char* title,  char* asciiArt[]) {
     wborder(win, '|', '|', '-', '-', '+', '+', '+', '+');
     int titleLength = strlen(title);
     int titleX = (COLS - titleLength) / 2;
@@ -292,7 +297,7 @@ void Barra(WINDOW* win,char *msg){
 
 //Asientos
 //**********************************************************************************************************************
-void mostrar_opciones(WINDOW* ventana, const char* opciones[], int filas, int columnas, int fila, int columna) {
+void mostrar_opciones(WINDOW* ventana, char* opciones[], int filas, int columnas, int fila, int columna) {
     // Borrar la ventana y mostrar las opciones
     wclear(ventana);
     // Imprimir el título
@@ -314,7 +319,7 @@ void mostrar_opciones(WINDOW* ventana, const char* opciones[], int filas, int co
     wrefresh(ventana);
 }
 
-int menuAsientos(WINDOW* ventana_opciones, const char* opciones[], int filas, int columnas) {
+int menuAsientos(WINDOW* ventana_opciones, char* opciones[], int filas, int columnas) {
     // Verificar si todos los elementos del menú están vacíos
     bool menu_vacio = true;
     for (int i = 0; i < filas * columnas; i++) {
