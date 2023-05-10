@@ -106,7 +106,7 @@ int main()
 // wrefresh(menu_win);
 // second loop   
  while (1)
-  {
+  { wclear(confirmationW);
     wclear(wAsientos);
   //Asientos
   wmove(wAsientos, 0, 0);
