@@ -161,7 +161,7 @@ for (int i = 0; i < 5; ++i)
  //  printw("%d",contadorG);
   //printw("PELICULA: %s",pelicula);
   reciboM[6] = malloc(strlen(pelicula) + 41);
-  sprintf(reciboM[6], "Total a pagar------ boletos :%d$", contadorG*50);
+  sprintf(reciboM[6], "Total a pagar por %d boletos:%d$", contadorG,contadorG*50);
   printRecibo(recibow);
   wrefresh(recibow);
   clrtoeol();

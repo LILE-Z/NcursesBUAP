@@ -1,96 +1,115 @@
 #include <ncurses.h>
-void mostrar_opciones(WINDOW* ventana, const char* opciones[], int filas, int columnas, int fila, int columna);
-int menuAsientos(WINDOW* ventana_opciones, const char* opciones[], int filas, int columnas);
+#include <string.h>
+
+void mostrar_opciones(WINDOW* ventana, int estados[], int filas, int columnas, int fila, int columna);
+int menuAsientos(WINDOW* ventana_opciones, int estados[], int filas, int columnas);
+
 int main() {
-    // LAS OPCIONES QUE ESTEN VACIAS NO SE PODRAN SELECCIONAR
-    const char* Asientos[] = {
-        "Opción 1", "Opción 2", "Opción 3",
-        "Opción 4", "Opción 5", "Opción 6",
-        "Opción 7", "Opción 8", "Opción 9",
-        "Opción 10","", ""
+    int estados[10] = {0, 1, 1, 1, 1, 1, 1, 1, 0, 0}; // 1: Disponible, 0: No disponible
 
-    };
-
-    // Inicializar ncurses
     initscr();
     cbreak();
     noecho();
     keypad(stdscr, TRUE);
 
-    // Crear la ventana para mostrar las opciones
     WINDOW* wAsientos = newwin(7, 45, (LINES - 7) / 2, (COLS - 45) / 2);
-    
-    refresh(); // Actualizar la pantalla
 
-    // Ejecutar el menú
- int opcionSeleccionada=  menuAsientos(wAsientos, Asientos, 4, 3);
-    printw("La opcion seleccionada es: %d y la opcion %s", opcionSeleccionada, Asientos[opcionSeleccionada]);
+    refresh();
+
+    int opcionSeleccionada = menuAsientos(wAsientos, estados, 4, 3);
+
+    if (opcionSeleccionada != -1) {
+        printw("La opción seleccionada es: %d", opcionSeleccionada + 1);
+    } else {
+        printw("No se seleccionó ninguna opción disponible.");
+    }
+
     refresh();
     getch();
-    // Finalizar ncurses
     endwin();
 
     return 0;
 }
-void mostrar_opciones(WINDOW* ventana, const char* opciones[], int filas, int columnas, int fila, int columna) {
-    // Borrar la ventana y mostrar las opciones
+
+void mostrar_opciones(WINDOW* ventana, int estados[], int filas, int columnas, int fila, int columna) {
     wclear(ventana);
-    // Imprimir el título
     mvwprintw(ventana, 1, (getmaxx(ventana) - 7) / 2, "Horario");
 
-    // Imprimir las opciones
     for (int i = 0; i < filas; i++) {
         for (int j = 0; j < columnas; j++) {
-            mvwprintw(ventana, i + 2, j * 15 + 2, opciones[i * columnas + j]);
+            int index = i * columnas + j;
+            if (estados[index] == 1) {
+                mvwprintw(ventana, i + 2, j * 15 + 2, "Disponible");
+            } else {
+                mvwprintw(ventana, i + 2, j * 15 + 2, "No disponible");
+            }
         }
     }
 
-    // Resaltar la opción seleccionada
-    wattron(ventana, A_REVERSE);
-    mvwprintw(ventana, fila + 2, columna * 15 + 2, opciones[fila * columnas + columna]);
-    wattroff(ventana, A_REVERSE);
+    int index = fila * columnas + columna;
+    if (estados[index] == 1) {
+        wattron(ventana, A_REVERSE);
+        mvwprintw(ventana, fila + 2, columna * 15 + 2, "Disponible");
+        wattroff(ventana, A_REVERSE);
+    }
 
-    // Actualizar la ventana
     wrefresh(ventana);
 }
-
-int menuAsientos(WINDOW* ventana_opciones, const char* opciones[], int filas, int columnas) {
-    // Verificar si todos los elementos del menú están vacíos
+int menuAsientos(WINDOW* ventana_opciones, int estados[], int filas, int columnas) {
     bool menu_vacio = true;
     for (int i = 0; i < filas * columnas; i++) {
-        if (strlen(opciones[i]) > 0) {
+        if (estados[i] == 1) {
             menu_vacio = false;
             break;
         }
     }
 
     if (menu_vacio) {
-        return -1;  // Menú vacío, retornar valor indicativo
+        return -1;
     }
 
     int fila = 0;
     int columna = 0;
 
-    mostrar_opciones(ventana_opciones, opciones, filas, columnas, fila, columna);
+    // Buscar la primera opción disponible
+    for (int i = 0; i < filas * columnas; i++) {
+        if (estados[i] == 1) {
+            fila = i / columnas;
+            columna = i % columnas;
+            break;
+        }
+    }
+
+    mostrar_opciones(ventana_opciones, estados, filas, columnas, fila, columna);
 
     while (true) {
         int tecla = getch();
 
         switch (tecla) {
             case KEY_UP:
-                fila = (fila - 1 + filas) % filas;
+                do {
+                    fila = (fila - 1 + filas) % filas;
+                    columna = (columna + columnas) % columnas;
+                } while (estados[fila * columnas + columna] != 1);
                 break;
             case KEY_DOWN:
-                fila = (fila + 1) % filas;
+                do {
+                    fila = (fila + 1) % filas;
+                    columna = (columna + columnas) % columnas;
+                } while (estados[fila * columnas + columna] != 1);
                 break;
             case KEY_LEFT:
-                columna = (columna - 1 + columnas) % columnas;
+                do {
+                    columna = (columna - 1 + columnas) % columnas;
+                } while (estados[fila * columnas + columna] != 1);
                 break;
             case KEY_RIGHT:
-                columna = (columna + 1) % columnas;
+                do {
+                    columna = (columna + 1) % columnas;
+                } while (estados[fila * columnas + columna] != 1);
                 break;
             case 10:
-                if (fila * columnas + columna < filas * columnas - 2 && strlen(opciones[fila * columnas + columna]) > 0) {
+                if (fila * columnas + columna < filas * columnas && estados[fila * columnas + columna] == 1) {
                     return fila * columnas + columna;
                 }
                 break;
@@ -98,6 +117,7 @@ int menuAsientos(WINDOW* ventana_opciones, const char* opciones[], int filas, in
                 break;
         }
 
-        mostrar_opciones(ventana_opciones, opciones, filas, columnas, fila, columna);
+        mostrar_opciones(ventana_opciones, estados, filas, columnas, fila, columna);
     }
 }
+
