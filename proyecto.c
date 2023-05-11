@@ -24,6 +24,15 @@ char* asciiArt[] = {
         "Opción 10","", ""
 
     };
+  char *reciboM[] = {
+    "Recibo de pago",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "Total a pagar: $ 100.00"
+  };
 //menu
 //int n_choices = sizeof(choices) / sizeof(char *);
 void print_menu(WINDOW *menu_win, int highlight, int n_choices);
@@ -41,13 +50,14 @@ int menuAsientos(WINDOW* ventana_opciones, char* opciones[], int filas, int colu
 
 //Confirmacion
 int confirmation_box(WINDOW* win,char* msg);
-
+//recibo
+void printRecibo(WINDOW *window);
 int main()
 
 { 
-  int confirmacionA=0,confirmacionP=0,contadorG=0,contadorL=0;
+  int confirmacionA=0,confirmacionP=0,contadorG=0,contadorL=0,contadorRecibo=0;
   int opcionSeleccionada=0;
-  char pelicula[30]="";
+  char pelicula[50]="";
   WINDOW *menu_win,*frame_win;
   //initiate ncurses
   initscr();
@@ -72,6 +82,9 @@ int main()
   wbkgd(confirmationW,COLOR_PAIR(3));
   box(confirmationW, 0, 0);
   keypad(confirmationW, TRUE);
+  WINDOW* recibow = newwin(LINES - 4, COLS - 4, 2, 2);
+  box(recibow, 0, 0);
+
   
   //keypad(confirmationW, TRUE);
 //             MENU
@@ -95,12 +108,16 @@ int main()
   printw( "Utilice las flechas para ir arriba y abajo, Presione enter para elegir"); //paraetros y,x, texto
     refresh();
   //MENU Peliculas
-  pelicula[0]='\0';
-  strcpy( pelicula,choices[MenuG(menu_win,frame_win)]);
+  //Cargar choices con las peliclas de la base de datos
+  contadorRecibo++;
+  pelicula[0]=0;
+  strcpy( pelicula,choices[MenuG(menu_win,frame_win)-1]);
+  printw("La opcion seleccionada es: %s", pelicula);
    werase(menu_win);
+   //cambiar choices por los horarios
   for (int i = 0; i < 5; ++i)
   {
-     choices[i]= "Hora:Hora";
+   //  snprintf(choices[i], 40, "Hora: %d", i+1);
   }
   //MENU Horarios 
   MenuG(menu_win,frame_win);
@@ -124,6 +141,9 @@ int main()
     }
  
   }
+  // Aqui se pasan a recibo los datos de la pelicula y los asientos
+  reciboM[contadorRecibo] = malloc(strlen(pelicula) + 1); // Asignar memoria para la cadena
+  strcpy(reciboM[contadorRecibo], pelicula);
   contadorG+=contadorL;
  wclear(confirmationW);
  // printw("La opcion seleccionada es: %d y la opcion %s", opcionSeleccionada, Asientos[opcionSeleccionada]);
@@ -136,8 +156,10 @@ int main()
   }
   clear();
   refresh();
-  printw("%d",contadorG);
-  printw("PELICULA: %s",pelicula);
+ //  printw("%d",contadorG);
+  //printw("PELICULA: %s",pelicula);
+  printRecibo(recibow);
+  wrefresh(recibow);
   clrtoeol();
   refresh();
   getch();
@@ -422,5 +444,30 @@ int confirmation_box(WINDOW* win,char *msg) {
         return 1;
     } else {
         return 0;
+    }
+}
+//Recibo
+//**********************************************************************************************************************
+void printRecibo(WINDOW *window) {
+    int i;
+    int size = sizeof(reciboM) / sizeof(reciboM[0]);
+    int sectionHeight = (getmaxy(window) - 2) / size;
+
+    for (i = 0; i < size; i++) {
+        // Imprimir línea horizontal
+        if (i != 0) {
+            mvwhline(window, i * sectionHeight, 1, ACS_HLINE, getmaxx(window) - 2);
+        }
+
+        // Imprimir elemento del arreglo
+        if (i == 0 || i == size - 1) {
+            wattron(window, A_BOLD| A_REVERSE);
+        }
+
+        mvwprintw(window, i * sectionHeight + 1, 2, "%s", reciboM[i]);
+
+        if (i == 0 || i == size - 1) {
+            wattroff(window, A_BOLD| A_REVERSE);
+        }
     }
 }
