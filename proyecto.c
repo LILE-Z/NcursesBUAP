@@ -115,10 +115,10 @@ int main()
   printw("La opcion seleccionada es: %s", pelicula);
    werase(menu_win);
    //cambiar choices por los horarios
-  for (int i = 0; i < 5; ++i)
-  {
-   //  snprintf(choices[i], 40, "Hora: %d", i+1);
-  }
+for (int i = 0; i < 5; ++i)
+{
+   choices[i] = strdup("Hora:Hora");
+}
   //MENU Horarios 
   MenuG(menu_win,frame_win);
  //werase(menu_win);
@@ -142,8 +142,10 @@ int main()
  
   }
   // Aqui se pasan a recibo los datos de la pelicula y los asientos
-  reciboM[contadorRecibo] = malloc(strlen(pelicula) + 1); // Asignar memoria para la cadena
-  strcpy(reciboM[contadorRecibo], pelicula);
+  reciboM[contadorRecibo] = malloc(strlen(pelicula) + 41);
+  sprintf(reciboM[contadorRecibo], "%s ------ boletos :%d", pelicula, contadorL);
+  //reciboM[contadorRecibo] = malloc(strlen(pelicula) + 1); // Asignar memoria para la cadena
+  //strcpy(reciboM[contadorRecibo], pelicula);
   contadorG+=contadorL;
  wclear(confirmationW);
  // printw("La opcion seleccionada es: %d y la opcion %s", opcionSeleccionada, Asientos[opcionSeleccionada]);
