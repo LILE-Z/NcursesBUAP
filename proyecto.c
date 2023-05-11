@@ -17,13 +17,7 @@ char* asciiArt[] = {
         "   > ^ <",
         NULL
 };
-   char* Asientos[] = {
-        "Opción 1", "Opción 2", "Opción 3",
-        "Opción 4", "Opción 5", "Opción 6",
-        "Opción 7", "Opción 8", "Opción 9",
-        "Opción 10","", ""
-
-    };
+     int estados[10] = {1, 0, 1, 1,0, 0, 0, 1, 0, 0}; // 1: Disponible, 0: No disponible
   char *reciboM[] = {
     "Recibo de pago",
     "",
@@ -45,8 +39,8 @@ void Barra(WINDOW* win,char* msg);
 void update_progress(WINDOW* win, int progress, int max_progress, int bar_width, int bar_x, int bar_y);
 
 //Horarios
-void mostrar_opciones(WINDOW* ventana,char* opciones[], int filas, int columnas, int fila, int columna);
-int menuAsientos(WINDOW* ventana_opciones, char* opciones[], int filas, int columnas);
+void mostrar_opciones(WINDOW* ventana, int estados[], int filas, int columnas, int fila, int columna);
+int menuAsientos(WINDOW* ventana_opciones, int estados[], int filas, int columnas);
 
 //Confirmacion
 int confirmation_box(WINDOW* win,char* msg);
@@ -131,8 +125,8 @@ for (int i = 0; i < 5; ++i)
   //Asientos
   contadorL++;
   wmove(wAsientos, 0, 0);
-   opcionSeleccionada=  menuAsientos(wAsientos, Asientos, 4, 3);
-   printw("La opcion seleccionada es: %d y la opcion %s", opcionSeleccionada, Asientos[opcionSeleccionada]);
+   opcionSeleccionada=  menuAsientos(wAsientos, estados, 4, 3);
+   printw("La opcion seleccionada es: %d y la opcion %d", opcionSeleccionada, estados[opcionSeleccionada]);
   
   //Confirmacion de si desea agregar mas asientos
   confirmacionA = confirmation_box(confirmationW,"Desea agregar mas asientos?");  
@@ -324,56 +318,64 @@ void Barra(WINDOW* win,char *msg){
 
 //Asientos
 //**********************************************************************************************************************
-void mostrar_opciones(WINDOW* ventana, char* opciones[], int filas, int columnas, int fila, int columna) {
-    // Borrar la ventana y mostrar las opciones
+
+void mostrar_opciones(WINDOW* ventana, int estados[], int filas, int columnas, int fila, int columna) {
     wclear(ventana);
-    // Imprimir el título
     mvwprintw(ventana, 1, (getmaxx(ventana) - 7) / 2, "Horario");
 
-    // Imprimir las opciones
     for (int i = 0; i < filas; i++) {
         for (int j = 0; j < columnas; j++) {
-            mvwprintw(ventana, i + 2, j * 15 + 2, opciones[i * columnas + j]);
+            int index = i * columnas + j;
+            if (estados[index] == 1) {
+                mvwprintw(ventana, i + 2, j * 15 + 2, "Disponible");
+            } else {
+                mvwprintw(ventana, i + 2, j * 15 + 2, "No disponible");
+            }
         }
     }
 
-    // Resaltar la opción seleccionada
-    wattron(ventana, A_REVERSE);
-    mvwprintw(ventana, fila + 2, columna * 15 + 2, opciones[fila * columnas + columna]);
-    wattroff(ventana, A_REVERSE);
+    int index = fila * columnas + columna;
+    if (estados[index] == 1) {
+        wattron(ventana, A_REVERSE);
+        mvwprintw(ventana, fila + 2, columna * 15 + 2, "Disponible");
+        wattroff(ventana, A_REVERSE);
+    }
 
-    // Actualizar la ventana
     wrefresh(ventana);
 }
-
-int menuAsientos(WINDOW* ventana_opciones, char* opciones[], int filas, int columnas) {
-    // Verificar si todos los elementos del menú están vacíos
+int menuAsientos(WINDOW* ventana_opciones, int estados[], int filas, int columnas) {
     bool menu_vacio = true;
     for (int i = 0; i < filas * columnas; i++) {
-        if (strlen(opciones[i]) > 0) {
+        if (estados[i] == 1) {
             menu_vacio = false;
             break;
         }
     }
 
     if (menu_vacio) {
-        return -1;  // Menú vacío, retornar valor indicativo
+        return -1;
     }
 
     int fila = 0;
     int columna = 0;
 
-    mostrar_opciones(ventana_opciones, opciones, filas, columnas, fila, columna);
+    mostrar_opciones(ventana_opciones, estados, filas, columnas, fila, columna);
 
     while (true) {
         int tecla = getch();
 
         switch (tecla) {
             case KEY_UP:
-                fila = (fila - 1 + filas) % filas;
+                do {
+                    fila = (fila - 1 + filas) % filas;
+                } while (!filaTieneElementosDisponibles(estados, filas, columnas, fila));
+                columna = encontrarPrimerElementoDisponibleEnFila(estados, filas, columnas, fila);
                 break;
             case KEY_DOWN:
-                fila = (fila + 1) % filas;
+                do {
+                    fila = (fila + 1) % filas;
+                } while (!filaTieneElementosDisponibles(estados, filas, columnas, fila));
+                columna = encontrarPrimerElementoDisponibleEnFila(estados, filas, columnas, fila);
                 break;
             case KEY_LEFT:
                 columna = (columna - 1 + columnas) % columnas;
@@ -382,7 +384,7 @@ int menuAsientos(WINDOW* ventana_opciones, char* opciones[], int filas, int colu
                 columna = (columna + 1) % columnas;
                 break;
             case 10:
-                if (fila * columnas + columna < filas * columnas - 2 && strlen(opciones[fila * columnas + columna]) > 0) {
+                if (fila * columnas + columna < filas * columnas && estados[fila * columnas + columna] == 1) {
                     return fila * columnas + columna;
                 }
                 break;
@@ -390,9 +392,30 @@ int menuAsientos(WINDOW* ventana_opciones, char* opciones[], int filas, int colu
                 break;
         }
 
-        mostrar_opciones(ventana_opciones, opciones, filas, columnas, fila, columna);
+        mostrar_opciones(ventana_opciones, estados, filas, columnas, fila, columna);
     }
 }
+
+int filaTieneElementosDisponibles(int estados[], int filas, int columnas, int fila) {
+    for (int i = fila * columnas; i < (fila + 1) * columnas; i++) {
+        if (estados[i] == 1) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+
+int encontrarPrimerElementoDisponibleEnFila(int estados[], int filas, int columnas, int fila) {
+    for (int i = fila * columnas; i < (fila + 1) * columnas; i++) {
+        if (estados[i] == 1) {
+            return i % columnas;
+        }
+    }
+    return 0; // En caso de no encontrar elementos disponibles, se devuelve la primera columna
+}
+
+
 // Confiramción
 //**********************************************************************************************************************
 int confirmation_box(WINDOW* win,char *msg) {
