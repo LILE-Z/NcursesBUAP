@@ -4,20 +4,15 @@
 
 int centerx, centery;
 int height, width;
-char *choices[] = {
-  "Eleccion 1",
-  "Eleccion 2",
-  "Eleccion 3",
-  "Eleccion 4",
-  "Salir",
-};
+char **choices=NULL;
+
 int n_choices = sizeof(choices) / sizeof(char *);
 void print_menu(WINDOW *menu_win, int highlight);
 int MenuG(WINDOW *menu_win,WINDOW *frame_win);
 int main()
 
 { 
-  
+  initializeChoices();
   WINDOW *menu_win,*frame_win;
   //initiate ncurses
   initscr();
@@ -52,33 +47,19 @@ int main()
   refresh();
   //MENU
  int opcion= MenuG(menu_win,frame_win);
+ getch();
+  //end ncurses
+clear();
+  refresh();
+ modifyChoices();
+ opcion= MenuG(menu_win,frame_win);
   clrtoeol();
   refresh();
   getch();
   endwin();
   return 0;
 }
-void print_menu(WINDOW *menu_win, int highlight)
-{
-  int x, y, i;
-  x = 2;
-  y = 3;
-  wborder(menu_win, '|', '|', '-', '-', '+', '+', '+', '+');
-  mvwprintw(menu_win, 1, 5, "MENU");
-  mvwchgat(menu_win, 1, 5, 5, A_BOLD, 1, NULL);  //parametros: ventana, y, x, largo, atributos, color, NULL
 
-  for(i = 0; i < n_choices; ++i)
-    {   if(highlight == i + 1) /* Resalta lo opcion actual */
-        { wattron(menu_win, A_REVERSE | A_BOLD );
-          mvwprintw(menu_win, y, x, "%s", choices[i]);
-          wattroff(menu_win, A_REVERSE | A_BOLD);
-        }
-      else
-        mvwprintw(menu_win, y, x, "%s", choices[i]);
-      y=y+2;
-    }
-  wrefresh(menu_win);
-}
 int MenuG(WINDOW *menu_win, WINDOW *frame_win) {
   int highlight = 1; /* Resalta la primera opcion por defecto */
   int choice = 0;
@@ -132,4 +113,47 @@ int MenuG(WINDOW *menu_win, WINDOW *frame_win) {
   attroff(A_BOLD | A_REVERSE);
   
   return choice;
+}
+void initializeChoices() {
+  choices = (char **)malloc(5 * sizeof(char *));
+for (int i = 0; i < 5; i++) {
+    choices[i] = NULL;  // Inicializar cada elemento con un puntero nulo
+  }
+
+  n_choices = 5;
+}
+
+void modifyChoices() {
+  // Liberar la memoria de las elecciones anteriores
+  for (int i = 0; i < n_choices; i++) {
+    free(choices[i]);
+  }
+
+  // Modificar las elecciones
+  choices[0] = strdup("Nueva eleccion 1");
+  choices[1] = strdup("Nueva eleccion 2");
+  choices[2] = strdup("Nueva eleccion 3");
+  choices[3] = strdup("Nueva eleccion 4");
+  choices[4] = strdup("Salir (modificado)");
+}
+
+void print_menu(WINDOW *menu_win, int highlight) {
+  int x, y, i;
+  x = 2;
+  y = 3;
+  wborder(menu_win, '|', '|', '-', '-', '+', '+', '+', '+');
+  mvwprintw(menu_win, 1, 5, "MENU");
+  mvwchgat(menu_win, 1, 5, 5, A_BOLD, 1, NULL);
+
+  for (i = 0; i < n_choices; ++i) {
+    if (highlight == i + 1) {
+      wattron(menu_win, A_REVERSE | A_BOLD);
+      mvwprintw(menu_win, y, x, "%s", choices[i]);
+      wattroff(menu_win, A_REVERSE | A_BOLD);
+    } else {
+      mvwprintw(menu_win, y, x, "%s", choices[i]);
+    }
+    y += 2;
+  }
+  wrefresh(menu_win);
 }
