@@ -6,7 +6,7 @@ int centerx, centery;
 int height, width;
 char **choices=NULL;
 
-int n_choices = sizeof(choices) / sizeof(char *);
+//int n_choices = sizeof(choices) / sizeof(char *);
 void print_menu(WINDOW *menu_win, int highlight);
 int MenuG(WINDOW *menu_win,WINDOW *frame_win);
 int main()

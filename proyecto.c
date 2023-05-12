@@ -4,13 +4,7 @@
 
 int centerx, centery;
 int height, width;
-char *choices[] = {
-  "Eleccion 1",
-  "Eleccion 2",
-  "Eleccion 3",
-  "Eleccion 4",
-  "Salir",
-};
+char **choices=NULL;
 char* asciiArt[] = {
         "   /\\_/\\",
         "  ( o.o )",
@@ -29,7 +23,7 @@ char* asciiArt[] = {
   };
 //menu
 //int n_choices = sizeof(choices) / sizeof(char *);
-void print_menu(WINDOW *menu_win, int highlight, int n_choices);
+void print_menu(WINDOW *menu_win, int highlight);
 int MenuG(WINDOW *menu_win,WINDOW *frame_win);
 void printPelicula(WINDOW* win,  char* title,  char* asciiArt[]);
 
@@ -49,6 +43,7 @@ void printRecibo(WINDOW *window);
 int main()
 
 { 
+  initializeChoices();
   int confirmacionA=0,confirmacionP=0,contadorG=0,contadorL=0,contadorRecibo=0;
   int opcionSeleccionada=0;
   char pelicula[50]="";
@@ -103,16 +98,14 @@ int main()
     refresh();
   //MENU Peliculas
   //Cargar choices con las peliclas de la base de datos
+  modifyChoices();
   contadorRecibo++;
   pelicula[0]=0;
   strcpy( pelicula,choices[MenuG(menu_win,frame_win)-1]);
   printw("La opcion seleccionada es: %s", pelicula);
    werase(menu_win);
    //cambiar choices por los horarios
-for (int i = 0; i < 5; ++i)
-{
-   choices[i] = strdup("Hora:Hora");
-} 
+  modifyChoices();
   //MENU Horarios 
   MenuG(menu_win,frame_win);
  //werase(menu_win);
@@ -167,74 +160,106 @@ for (int i = 0; i < 5; ++i)
 
 ///FUNCIONES
 //**********************************************************************************************************************
-void print_menu(WINDOW *menu_win, int highlight, int n_choices)
-{ int x, y, i;
-  x = 2;
-  y = 3;
-  wborder(menu_win, '|', '|', '-', '-', '+', '+', '+', '+');
-  mvwprintw(menu_win, 1, 5, "MENU");
-  mvwchgat(menu_win, 1, 5, 4, A_BOLD, 4, NULL);  //parametros: ventana, y, x, largo, atributos, color, NULL
 
-  for(i = 0; i < n_choices; ++i)
-    {   if(highlight == i + 1) /* Resalta lo opcion actual */
-        { wattron(menu_win, A_REVERSE | A_BOLD );
-          mvwprintw(menu_win, y, x, "%s", choices[i]);
-          wattroff(menu_win, A_REVERSE | A_BOLD);
-        }
-      else
-        mvwprintw(menu_win, y, x, "%s", choices[i]);
-      y=y+2;
-    }
-  wrefresh(menu_win);
-}
-int MenuG( WINDOW *menu_win,WINDOW *frame_win){
-    int n_choices = sizeof(choices) / sizeof(char *);
-   int highlight = 1; /* Resalta la primera opcion por defecto */
+int MenuG(WINDOW *menu_win, WINDOW *frame_win) {
+  int highlight = 1; /* Resalta la primera opcion por defecto */
   int choice = 0;
   int c;
   
-  wborder(frame_win, '|', '|', '-', '-', '+', '+', '+', '+');
-     print_menu(menu_win, highlight,n_choices);
-  while(1)
-    { c = wgetch(menu_win);
-      switch(c) {
-        case KEY_UP:
-          if(highlight == 1)
-            highlight = n_choices;
-          else
-            --highlight;
-          break;
-        case KEY_DOWN:
-          if(highlight == n_choices)
-            highlight = 1;
-          else
-            ++highlight;
-          break;
-        case 10:
-          choice = highlight;
-          break;
-        default:
-          mvprintw((LINES/2)+2, 0, "Caracter presionado = %3d Ojala se imprima como '%c'", c, c);
-          refresh();
-          break;
-        }
-          // Incertar info en el frame
-        wclear(frame_win);
-        //mvwprintw(frame_win, 1, 1, "Opcion %d pelicula %s\n", highlight, choices[highlight - 1]);
-        printPelicula(frame_win, choices[highlight - 1], asciiArt);
-
-        if(choice != 0) /* El usuario eligio salir del bucle infinito */
-            break;
-
-        // Refresca el menu
-        print_menu(menu_win, highlight,n_choices);
+  int n_choices = 5; // Calcular el número de opciones de manera local
+  
+  print_menu(menu_win, highlight);
+  
+  while (1) {
+    c = wgetch(menu_win);
+    
+    switch (c) {
+      case KEY_UP:
+        if (highlight == 1)
+          highlight = n_choices;
+        else
+          --highlight;
+        break;
+        
+      case KEY_DOWN:
+        if (highlight == n_choices)
+          highlight = 1;
+        else
+          ++highlight;
+        break;
+        
+      case 10:
+        choice = highlight;
+        break;
+        
+      default:
+        mvprintw((LINES / 2) + 2, 0, "Caracter presionado = %3d Ojala se imprima como '%c'", c, c);
+        refresh();
+        break;
     }
-  attron(A_BOLD|A_REVERSE);
+    
+    // Insertar info en el frame
+    wclear(frame_win);
+    mvwprintw(frame_win, 1, 1, "Opcion %d pelicula %s\n", highlight, choices[highlight - 1]);
+    wborder(frame_win, '|', '|', '-', '-', '+', '+', '+', '+');
+    wrefresh(frame_win);
+    
+    if (choice != 0) /* El usuario eligio salir del bucle infinito */
+      break;
+    
+    // Refresca el menu
+    print_menu(menu_win, highlight);
+  }
+  
+  attron(A_BOLD | A_REVERSE);
   mvprintw(2, 10, "Elegiste la opcion %d con la cadena %s\n", choice, choices[choice - 1]);
-  attroff(A_BOLD|A_REVERSE);
+  attroff(A_BOLD | A_REVERSE);
+  
   return choice;
 }
+void print_menu(WINDOW *menu_win, int highlight) {
+  int x, y, i;
+  x = 2;
+  y = 3;
+  int n_choices = 5; // Calcular el número de opciones de manera local
 
+  wborder(menu_win, '|', '|', '-', '-', '+', '+', '+', '+');
+  mvwprintw(menu_win, 1, 5, "MENU");
+  mvwchgat(menu_win, 1, 5, 5, A_BOLD, 1, NULL);
+
+  for (i = 0; i < n_choices; ++i) {
+    if (highlight == i + 1) {
+      wattron(menu_win, A_REVERSE | A_BOLD);
+      mvwprintw(menu_win, y, x, "%s", choices[i]);
+      wattroff(menu_win, A_REVERSE | A_BOLD);
+    } else {
+      mvwprintw(menu_win, y, x, "%s", choices[i]);
+    }
+    y += 2;
+  }
+  wrefresh(menu_win);
+}
+void initializeChoices() {
+  choices = (char **)malloc(5 * sizeof(char *));
+  for (int i = 0; i < 5; i++) {
+    choices[i] = NULL;  // Inicializar cada elemento con un puntero nulo
+  }
+}
+
+void modifyChoices() {
+  // Liberar la memoria de las elecciones anteriores
+  for (int i = 0; i < 5; i++) {
+    free(choices[i]);
+  }
+
+  // Modificar las elecciones
+  choices[0] = strdup("Nueva eleccion 1");
+  choices[1] = strdup("Nueva eleccion 2");
+  choices[2] = strdup("Nueva eleccion 3");
+  choices[3] = strdup("Nueva eleccion 4");
+  choices[4] = strdup("Salir (modificado)");
+}
+//Pelicula 
 void printPelicula(WINDOW* win, char* title,  char* asciiArt[]) {
     wborder(win, '|', '|', '-', '-', '+', '+', '+', '+');
     int titleLength = strlen(title);
