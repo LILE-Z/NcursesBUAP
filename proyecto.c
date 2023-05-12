@@ -200,10 +200,10 @@ int MenuG(WINDOW *menu_win, WINDOW *frame_win) {
     
     // Insertar info en el frame
     wclear(frame_win);
-    mvwprintw(frame_win, 1, 1, "Opcion %d pelicula %s\n", highlight, choices[highlight - 1]);
+    printPelicula(frame_win,"Pelicula",asciiArt);
+ //   mvwprintw(frame_win, 1, 1, "Opcion %d pelicula %s\n", highlight, choices[highlight - 1]);
     wborder(frame_win, '|', '|', '-', '-', '+', '+', '+', '+');
     wrefresh(frame_win);
-    
     if (choice != 0) /* El usuario eligio salir del bucle infinito */
       break;
     

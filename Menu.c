@@ -64,7 +64,7 @@ int MenuG(WINDOW *menu_win, WINDOW *frame_win) {
   int choice = 0;
   int c;
   
-  int n_choices = 5; // Calcular el número de opciones de manera local
+  int n_choices = 4; // Calcular el número de opciones de manera local
   
   print_menu(menu_win, highlight);
   
@@ -119,7 +119,7 @@ void print_menu(WINDOW *menu_win, int highlight) {
   int x, y, i;
   x = 2;
   y = 3;
-  int n_choices = 5; // Calcular el número de opciones de manera local
+  int n_choices = 4; // Calcular el número de opciones de manera local
 
   wborder(menu_win, '|', '|', '-', '-', '+', '+', '+', '+');
   mvwprintw(menu_win, 1, 5, "MENU");
@@ -138,15 +138,15 @@ void print_menu(WINDOW *menu_win, int highlight) {
   wrefresh(menu_win);
 }
 void initializeChoices() {
-  choices = (char **)malloc(5 * sizeof(char *));
-  for (int i = 0; i < 5; i++) {
+  choices = (char **)malloc(4 * sizeof(char *));
+  for (int i = 0; i < 4; i++) {
     choices[i] = NULL;  // Inicializar cada elemento con un puntero nulo
   }
 }
 
 void modifyChoices() {
   // Liberar la memoria de las elecciones anteriores
-  for (int i = 0; i < 5; i++) {
+  for (int i = 0; i < 4; i++) {
     free(choices[i]);
   }
 
@@ -155,7 +155,6 @@ void modifyChoices() {
   choices[1] = strdup("Nueva eleccion 2");
   choices[2] = strdup("Nueva eleccion 3");
   choices[3] = strdup("Nueva eleccion 4");
-  choices[4] = strdup("Salir (modificado)");
 }
 
 
