@@ -8,7 +8,7 @@ int main(){
 	recibir_info();
 	lectura();
 	initscr(); // Inicializar ncurses
-    mvprintw(2, 0, "Titulo: %s\n", rSalas[0].pelicula.titulo);
+    printw("Titulo: %s\n", rSalas[0].pelicula.titulo);
     refresh(); // Actualizar pantalla
     getch(); // Esperar una entrada del usuario
     endwin(); // Finalizar ncurses
