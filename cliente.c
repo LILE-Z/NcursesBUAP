@@ -7,6 +7,10 @@ void peliculas();
 int main(){
 	recibir_info();
 	lectura();
+	printf("Cliente\n");
+	printf("lalalal %s",rSalas[1].pelicula.titulo);
+	peliculas();
+	sleep(10);
 	initscr(); // Inicializar ncurses
     printw("Titulo: %s\n", rSalas[0].pelicula.titulo);
     refresh(); // Actualizar pantalla
