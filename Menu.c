@@ -123,7 +123,7 @@ int MenuG(WINDOW *menu_win, WINDOW *frame_win)
   mvprintw(2, 10, "Elegiste la opcion %d con la cadena %s\n", choice, choices[choice - 1]);
   attroff(A_BOLD | A_REVERSE);
 
-  return choice;
+  return choice-1;
 }
 
 void print_menu(WINDOW *menu_win, int highlight) {
@@ -166,7 +166,7 @@ void modificarHoras() {
   choices[1] = strdup("Nueva eleccion 2");
   choices[2] = strdup("Nueva eleccion 3");
   choices[3] = strdup("Nueva eleccion 4");
-  choices[4] = strdup("hfhfhf");
+  choices[4] = strdup("hfhfhfk");
 }
 
 
