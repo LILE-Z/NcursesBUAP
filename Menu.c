@@ -13,6 +13,7 @@ int main()
 
 { 
   initializeChoices();
+  modificarHoras();
   WINDOW *menu_win,*frame_win;
   //initiate ncurses
   initscr();
@@ -51,7 +52,7 @@ int main()
   //end ncurses
 clear();
   refresh();
- modifyChoices();
+ modificarHoras();
  opcion= MenuG(menu_win,frame_win);
   clrtoeol();
   refresh();
@@ -59,67 +60,77 @@ clear();
   endwin();
   return 0;
 }
-int MenuG(WINDOW *menu_win, WINDOW *frame_win) {
+int MenuG(WINDOW *menu_win, WINDOW *frame_win)
+{
   int highlight = 1; /* Resalta la primera opcion por defecto */
   int choice = 0;
   int c;
-  
-  int n_choices = 4; // Calcular el número de opciones de manera local
-  
+
+  int n_choices = 0;
+  for (int i = 0; i < 5; i++)
+  {
+    if (choices[i] && strlen(choices[i]) > 0)
+      n_choices++;
+  }
+
   print_menu(menu_win, highlight);
-  
-  while (1) {
+
+  while (1)
+  {
     c = wgetch(menu_win);
-    
-    switch (c) {
-      case KEY_UP:
-        if (highlight == 1)
-          highlight = n_choices;
-        else
-          --highlight;
-        break;
-        
-      case KEY_DOWN:
-        if (highlight == n_choices)
-          highlight = 1;
-        else
-          ++highlight;
-        break;
-        
-      case 10:
-        choice = highlight;
-        break;
-        
-      default:
-        mvprintw((LINES / 2) + 2, 0, "Caracter presionado = %3d Ojala se imprima como '%c'", c, c);
-        refresh();
-        break;
+
+    switch (c)
+    {
+    case KEY_UP:
+      if (highlight == 1)
+        highlight = n_choices;
+      else
+        --highlight;
+      break;
+
+    case KEY_DOWN:
+      if (highlight == n_choices)
+        highlight = 1;
+      else
+        ++highlight;
+      break;
+
+    case 10:
+      choice = highlight;
+      break;
+
+    default:
+      mvprintw((LINES / 2) + 2, 0, "Caracter presionado = %3d Ojala se imprima como '%c'", c, c);
+      refresh();
+      break;
     }
-    
+
     // Insertar info en el frame
     wclear(frame_win);
-    mvwprintw(frame_win, 1, 1, "Opcion %d pelicula %s\n", highlight, choices[highlight - 1]);
+    if (choices[highlight - 1] && strlen(choices[highlight - 1]) > 0)
+      mvwprintw(frame_win, 1, 1, "Opcion %d pelicula %s\n", highlight, choices[highlight - 1]);
     wborder(frame_win, '|', '|', '-', '-', '+', '+', '+', '+');
     wrefresh(frame_win);
-    
+
     if (choice != 0) /* El usuario eligio salir del bucle infinito */
       break;
-    
+
     // Refresca el menu
     print_menu(menu_win, highlight);
   }
-  
+
   attron(A_BOLD | A_REVERSE);
   mvprintw(2, 10, "Elegiste la opcion %d con la cadena %s\n", choice, choices[choice - 1]);
   attroff(A_BOLD | A_REVERSE);
-  
+
   return choice;
 }
+
 void print_menu(WINDOW *menu_win, int highlight) {
   int x, y, i;
   x = 2;
   y = 3;
-  int n_choices = 4; // Calcular el número de opciones de manera local
+  int n_choices = 5; // Calcular el número de opciones de manera local
 
   wborder(menu_win, '|', '|', '-', '-', '+', '+', '+', '+');
   mvwprintw(menu_win, 1, 5, "MENU");
@@ -138,15 +149,15 @@ void print_menu(WINDOW *menu_win, int highlight) {
   wrefresh(menu_win);
 }
 void initializeChoices() {
-  choices = (char **)malloc(4 * sizeof(char *));
-  for (int i = 0; i < 4; i++) {
+  choices = (char **)malloc(5 * sizeof(char *));
+  for (int i = 0; i < 5; i++) {
     choices[i] = NULL;  // Inicializar cada elemento con un puntero nulo
   }
 }
 
-void modifyChoices() {
+void modificarHoras() {
   // Liberar la memoria de las elecciones anteriores
-  for (int i = 0; i < 4; i++) {
+  for (int i = 0; i < 5; i++) {
     free(choices[i]);
   }
 
@@ -155,6 +166,7 @@ void modifyChoices() {
   choices[1] = strdup("Nueva eleccion 2");
   choices[2] = strdup("Nueva eleccion 3");
   choices[3] = strdup("Nueva eleccion 4");
+  choices[4] = strdup("hfhfhf");
 }
 
 
