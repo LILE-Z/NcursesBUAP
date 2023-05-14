@@ -12,7 +12,7 @@ char* asciiArt[] = {
         "   > ^ <",
         NULL
 };
-     int estados[10] = {1, 0, 1, 1,0, 0, 0, 1, 0, 0}; // 1: Disponible, 0: No disponible
+  int estados[10] ;// 1: Disponible, 0: No disponible
   char *reciboM[] = {
     "Recibo de pago",
     "",
@@ -37,7 +37,6 @@ void update_progress(WINDOW* win, int progress, int max_progress, int bar_width,
 void mostrar_opciones(WINDOW* ventana, int estados[], int filas, int columnas, int fila, int columna);
 int menuAsientos(WINDOW* ventana_opciones, int estados[], int filas, int columnas);
 void HorasC();
-void modifyR(struct Sala sala[]);
 //Confirmacion
 int confirmation_box(WINDOW* win,char* msg);
 //recibo
@@ -45,7 +44,7 @@ void printRecibo(WINDOW *window);
 int main()
 
 { 
-  int confirmacionA=0,confirmacionP=0,contadorG=0,contadorL=0,contadorRecibo=0;
+  int confirmacionA=0,confirmacionP=0,contadorG=0,contadorL=0,contadorRecibo=0,asientoC=0,horario=0,sala=0;
   int opcionSeleccionada=0;
   char pelicula[50]="";
   WINDOW *menu_win,*frame_win;
@@ -105,14 +104,15 @@ int main()
   peliculasC();
   contadorRecibo++;
   pelicula[0]=0;
-  strcpy( pelicula,choices[MenuG(menu_win,frame_win)]);
+  sala=MenuG(menu_win,frame_win);
+  strcpy( pelicula,choices[sala]);
   printw("La opcion seleccionada es: %s", pelicula);
   werase(menu_win);
    //cambiar choices por los horarios
   HorasC();
   //MENU Horarios 
-  MenuG(menu_win,frame_win);
- 
+  horario=MenuG(menu_win,frame_win);
+  asientosC(sala,horario);
 // second loop  
  contadorL=0; //selecciono un asiento en un misma pelicula
  while (1)
@@ -122,6 +122,12 @@ int main()
   contadorL++;
   wmove(wAsientos, 0, 0);
    opcionSeleccionada=  menuAsientos(wAsientos, estados, 4, 3);
+   if (opcionSeleccionada == -1) {
+      contadorL--;
+      break;
+    }
+ // Registra el asiento seleccionado
+   rSalas[sala].asientos[horario][opcionSeleccionada]=0;
    printw("La opcion seleccionada es: %d y la opcion %d", opcionSeleccionada, estados[opcionSeleccionada]);
   
   //Confirmacion de si desea agregar mas asientos
@@ -211,7 +217,8 @@ int MenuG(WINDOW *menu_win, WINDOW *frame_win)
     // Insertar info en el frame
     wclear(frame_win);
     if (choices[highlight - 1] && strlen(choices[highlight - 1]) > 0)
-      mvwprintw(frame_win, 1, 1, "Opcion %d pelicula %s\n", highlight, choices[highlight - 1]);
+     printPelicula(frame_win, ("Opcion %d pelicula %s\n", highlight, choices[highlight - 1]),asciiArt);
+    //  mvwprintw(frame_win, 1, 1, "Opcion %d pelicula %s\n", highlight, choices[highlight - 1]); 
     wborder(frame_win, '|', '|', '-', '-', '+', '+', '+', '+');
     wrefresh(frame_win);
 
@@ -277,7 +284,13 @@ for (int i = 0; i < 5; i++) {
     choices[i] =  strdup(rSalas[i].pelicula.titulo);
   }
 }
-//Modificar asientos
+void asientosC(int sala,int horario ){
+  //sala pelicual , horario el arreglo de asientos
+  for (int i = 0; i < 9; i++) {
+    estados[i] = rSalas[sala].asientos[horario][i];
+  } 
+  estados[9] = 1;
+}
 
 
 
