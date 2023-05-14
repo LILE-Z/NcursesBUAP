@@ -367,7 +367,7 @@ void Barra(WINDOW* win,char *msg){
     mvwprintw(win,1,(COLS-strlen(msg))/2,msg);
     for (int i = 0; i <= 100; ++i) {
         update_progress(win, i, 100, (COLS-4)-15, 5, 2);
-        usleep(1000);
+        usleep(10000);
     }
 
 }
