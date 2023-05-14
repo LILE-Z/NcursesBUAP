@@ -13,7 +13,7 @@ int main()
 
 { 
   initializeChoices();
-  modificarHoras();
+  HorasC();
   WINDOW *menu_win,*frame_win;
   //initiate ncurses
   initscr();
@@ -52,7 +52,7 @@ int main()
   //end ncurses
 clear();
   refresh();
- modificarHoras();
+ HorasC();
  opcion= MenuG(menu_win,frame_win);
   clrtoeol();
   refresh();
@@ -155,7 +155,7 @@ void initializeChoices() {
   }
 }
 
-void modificarHoras() {
+void HorasC() {
   // Liberar la memoria de las elecciones anteriores
   for (int i = 0; i < 5; i++) {
     free(choices[i]);

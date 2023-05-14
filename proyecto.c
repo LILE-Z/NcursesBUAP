@@ -36,7 +36,7 @@ void update_progress(WINDOW* win, int progress, int max_progress, int bar_width,
 //Horarios
 void mostrar_opciones(WINDOW* ventana, int estados[], int filas, int columnas, int fila, int columna);
 int menuAsientos(WINDOW* ventana_opciones, int estados[], int filas, int columnas);
-void modificarHoras();
+void HorasC();
 void modifyR(struct Sala sala[]);
 //Confirmacion
 int confirmation_box(WINDOW* win,char* msg);
@@ -51,7 +51,7 @@ int main()
   WINDOW *menu_win,*frame_win;
   initializeChoices();
   recibir_info();
-  lectura(); 
+  lectura();
   //initiate ncurses
   initscr();
   clear();
@@ -81,39 +81,38 @@ int main()
   
   //keypad(confirmationW, TRUE);
 //             MENU
-  menu_win = newwin(14,15,4,0); //parametros: alto, ancho, y, x
+  menu_win = newwin(14,19,4,0); //parametros: alto, ancho, y, x
   wbkgd(menu_win, COLOR_PAIR(2));
   keypad(menu_win, TRUE);
   refresh();
   //Frame 
-  frame_win = newwin(LINES-4,COLS-16,4,16); //parametros: alto, ancho, y, x
+  frame_win = newwin(LINES-4,COLS-19,4,18); //parametros: alto, ancho, y, x
   wbkgd(frame_win, COLOR_PAIR(2));
   //wborder(frame_win, '|', '|', '-', '-', '+', '+', '+', '+');
   wrefresh(frame_win);
   refresh();
-  //El ascii quedara con el de la anterior opcion titulo cambiara
   
- 
+
  //Gestiona menu de peliculas
   while (1)
   { 
     clear();
+    wclear(menu_win);
   printw( "Utilice las flechas para ir arriba y abajo, Presione enter para elegir"); //paraetros y,x, texto
     refresh();
   //MENU Peliculas
   //Cargar choices con las peliclas de la base de datos
-  modificarHoras();// debe de cambiarse por las opciones del menu
+  peliculasC();
   contadorRecibo++;
   pelicula[0]=0;
   strcpy( pelicula,choices[MenuG(menu_win,frame_win)]);
   printw("La opcion seleccionada es: %s", pelicula);
-   werase(menu_win);
+  werase(menu_win);
    //cambiar choices por los horarios
-  modificarHoras();
+  HorasC();
   //MENU Horarios 
   MenuG(menu_win,frame_win);
- //werase(menu_win);
-// wrefresh(menu_win);
+ 
 // second loop  
  contadorL=0; //selecciono un asiento en un misma pelicula
  while (1)
@@ -257,19 +256,31 @@ void initializeChoices() {
     choices[i] = NULL;  // Inicializar cada elemento con un puntero nulo
   }
 }
-void modificarHoras() {
+void HorasC() {
   // Liberar la memoria de las elecciones anteriores
   for (int i = 0; i < 5; i++) {
     free(choices[i]);
   }
-
   // Modificar las elecciones
-  choices[0] = strdup("Nueva eleccion 1");
-  choices[1] = strdup("Nueva eleccion 2");
-  choices[2] = strdup("Nueva eleccion 3");
-  choices[3] = strdup("Nueva eleccion 4");
-  choices[4] = strdup("Nuevo eleccion 5");
+  choices[0] = strdup("11:00");
+  choices[1] = strdup("13:00");
+  choices[2] = strdup("03:00");
+  choices[3] = strdup("06:00");
+  choices[4] = strdup("");
 }
+void peliculasC() {
+  // Liberar la memoria de las elecciones anteriores
+  for (int i = 0; i < 5; i++) {
+    free(choices[i]);
+  }
+for (int i = 0; i < 5; i++) {
+    choices[i] =  strdup(rSalas[i].pelicula.titulo);
+  }
+}
+//Modificar asientos
+
+
+
 //Pelicula 
 void printPelicula(WINDOW* win, char* title,  char* asciiArt[]) {
     wborder(win, '|', '|', '-', '-', '+', '+', '+', '+');
@@ -357,7 +368,7 @@ void Barra(WINDOW* win,char *msg){
 
 void mostrar_opciones(WINDOW* ventana, int estados[], int filas, int columnas, int fila, int columna) {
     wclear(ventana);
-    mvwprintw(ventana, 1, (getmaxx(ventana) - 7) / 2, "Horario");
+    mvwprintw(ventana, 1, (getmaxx(ventana) - 7) / 2, "Asientos");
 
     for (int i = 0; i < filas; i++) {
         for (int j = 0; j < columnas; j++) {
