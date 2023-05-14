@@ -112,12 +112,12 @@ int main()
   HorasC();
   //MENU Horarios 
   horario=MenuG(menu_win,frame_win);
-  asientosC(sala,horario);
 // second loop  
  contadorL=0; //selecciono un asiento en un misma pelicula
  while (1)
   { wclear(confirmationW);
     wclear(wAsientos);
+  asientosC(sala,horario);
   //Asientos
   contadorL++;
   wmove(wAsientos, 0, 0);
@@ -129,7 +129,7 @@ int main()
  // Registra el asiento seleccionado
    rSalas[sala].asientos[horario][opcionSeleccionada]=0;
    printw("La opcion seleccionada es: %d y la opcion %d", opcionSeleccionada, estados[opcionSeleccionada]);
-  
+   escritura();
   //Confirmacion de si desea agregar mas asientos
   confirmacionA = confirmation_box(confirmationW,"Desea agregar mas asientos?");  
     if(confirmacionA==0) {
