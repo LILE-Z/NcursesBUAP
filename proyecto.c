@@ -6,11 +6,16 @@
 int centerx, centery;
 int height, width;
 char **choices=NULL;
-char* asciiArt[] = {
-        "   /\\_/\\",
-        "  ( o.o )",
-        "   > ^ <",
-        NULL
+  char* asciiArt[] = {
+  "⢰⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶",
+	"⢸⣿⣿⣿⣿⠿⠿⠿⠿⠿⠿⠿⠿⣿⣿⣿⣿⣿",
+	"⢸⣿⣿⠟⣱⡿⣋⢿⣮⡻⢗⣽⡿⣊⠻⣿⣿⣿",
+	"⢸⣿⠫⣮⡻⣷⣝⢷⣝⢿⡿⣫⣾⢿⣷⡝⣻⣿",
+	"⢸⣿⣷⣝⢿⣮⡻⣷⣝⣣⣾⢟⣵⡿⣫⣾⣿⣿",
+  "⢸⣿⣿⣿⣷⣝⢿⣮⡻⢟⣵⡿⣫⣾⣿⣿⣿⣿",
+	"⢸⣿⣿⣿⣿⣿⣷⣝⢿⡿⣫⣾⣿⣿⣿⣿⣿⣿",
+	"⢸⣿⣿⣿⣿⣿⣿⣿⣷⣾⣿⣿⣿⣿⣿⣿⣿⣿",
+	"⠸⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿" ,NULL
 };
   int estados[10] ;// 1: Disponible, 0: No disponible
   char *reciboM[] = {
@@ -91,7 +96,6 @@ int main()
   wrefresh(frame_win);
   refresh();
   
-
  //Gestiona menu de peliculas
   while (1)
   { 
