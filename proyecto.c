@@ -7,7 +7,7 @@
 int centerx, centery;
 int height, width;
 char **choices=NULL;
-  char* asciiArt[] = {
+  char* asciiArt1[] = {
   "⢰⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶",
 	"⢸⣿⣿⣿⣿⠿⠿⠿⠿⠿⠿⠿⠿⣿⣿⣿⣿⣿",
 	"⢸⣿⣿⠟⣱⡿⣋⢿⣮⡻⢗⣽⡿⣊⠻⣿⣿⣿",
@@ -18,7 +18,7 @@ char **choices=NULL;
 	"⢸⣿⣿⣿⣿⣿⣿⣿⣷⣾⣿⣿⣿⣿⣿⣿⣿⣿",
 	"⠸⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿" ,NULL
 };
-char* asciiArt2[] = {    
+char* asciiArt[] = {    
   "⢰⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
 	"⢸⣿⣿⣿⣿⠿⠿⠿⠿⠿⠿⠿⠿⣿⣿⣿⣿⣿⠀⠀⣠⣶⣿⣿⣿⣷⣤⠀⠀⠀⢸⣿⡇⠀⠀⢸⣿⣿⣄⠀⠀⠀⠀⠀⢸⣿⡇⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⣴⣾⣿⣿⣿⣶⣄⠀⠀",
 	"⢸⣿⣿⠟⣱⡿⣋⢿⣮⡻⢗⣽⡿⣊⠻⣿⣿⣿⠀⢰⣿⣿⠋⠉⠉⢻⣿⡇⠀⠀⢸⣿⡇⠀⠀⢸⣿⣿⣿⣧⠀⠀⠀⠀⢸⣿⡇⠀⠀⢸⣿⣿⠉⠉⠉⠉⠉⠉⠁⠀⣼⣿⡟⠉⠉⠙⣿⣿⡄⠀",
@@ -326,10 +326,11 @@ void printPelicula(WINDOW* win, char* title,  char* asciiArt[]) {
     mvwprintw(win, 1, titleX, "%s", title); // Mostrar título en la línea 1
 
     int artStartY = 3; // Inicio de las líneas de arte ASCII
-
+    int maxX= getmaxx(win);
     for (int i = 0; asciiArt[i] != NULL; i++) {
-        int artX = (COLS - strlen(asciiArt[i])) / 2;
+        int artX = (getmaxx(win)- 42) / 2;
         mvwprintw(win, artStartY + i, artX, "%s", asciiArt[i]);
+        //mvwprintw(win, artStartY + i, 3, "%s", asciiArt[i]);
     }
 
     wrefresh(win);
