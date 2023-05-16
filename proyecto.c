@@ -3,6 +3,7 @@
 #include <string.h>
 #include "recibir_archivo.h"
 #include "esc_lec_salas.h"
+#include <locale.h>
 int centerx, centery;
 int height, width;
 char **choices=NULL;
@@ -16,6 +17,17 @@ char **choices=NULL;
 	"⢸⣿⣿⣿⣿⣿⣷⣝⢿⡿⣫⣾⣿⣿⣿⣿⣿⣿",
 	"⢸⣿⣿⣿⣿⣿⣿⣿⣷⣾⣿⣿⣿⣿⣿⣿⣿⣿",
 	"⠸⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿" ,NULL
+};
+char* asciiArt2[] = {    
+  "⢰⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
+	"⢸⣿⣿⣿⣿⠿⠿⠿⠿⠿⠿⠿⠿⣿⣿⣿⣿⣿⠀⠀⣠⣶⣿⣿⣿⣷⣤⠀⠀⠀⢸⣿⡇⠀⠀⢸⣿⣿⣄⠀⠀⠀⠀⠀⢸⣿⡇⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⣴⣾⣿⣿⣿⣶⣄⠀⠀",
+	"⢸⣿⣿⠟⣱⡿⣋⢿⣮⡻⢗⣽⡿⣊⠻⣿⣿⣿⠀⢰⣿⣿⠋⠉⠉⢻⣿⡇⠀⠀⢸⣿⡇⠀⠀⢸⣿⣿⣿⣧⠀⠀⠀⠀⢸⣿⡇⠀⠀⢸⣿⣿⠉⠉⠉⠉⠉⠉⠁⠀⣼⣿⡟⠉⠉⠙⣿⣿⡄⠀",
+	"⢸⣿⠫⣮⡻⣷⣝⢷⣝⢿⡿⣫⣾⢿⣷⡝⣻⣿⠀⠸⣿⣿⣀⠀⠀⠀⠀⠀⠀⠀⢸⣿⡇⠀⠀⢸⣿⣿⠻⣿⣷⡄⠀⠀⢸⣿⡇⠀⠀⢸⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⢻⣿⣧⡀⠀⠀⠀⠀⠀⠀",
+	"⢸⣿⣷⣝⢿⣮⡻⣷⣝⣣⣾⢟⣵⡿⣫⣾⣿⣿⠀⠀⠙⢿⣿⣿⣿⣷⣤⡀⠀⠀⢸⣿⡇⠀⠀⢸⣿⣿⠀⠹⣿⣿⣄⠀⢸⣿⡇⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠈⠻⣿⣿⣿⣿⣶⣄⠀⠀",
+  "⢸⣿⣿⣿⣷⣝⢿⣮⡻⢟⣵⡿⣫⣾⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀⠉⢻⣿⣇⠀⠀⢸⣿⡇⠀⠀⢸⣿⣿⠀⠀⠘⢿⣿⣦⢸⣿⡇⠀⠀⢸⣿⣿⠉⠉⠉⠉⠉⠁⠀⠀⠀⠀⠀⠀⠈⠙⣿⣿⡄⠀",
+	"⢸⣿⣿⣿⣿⣿⣷⣝⢿⡿⣫⣾⣿⣿⣿⣿⣿⣿⠀⠸⣿⣿⣀⠀⢀⣼⣿⡟⠀⠀⢸⣿⡇⠀⠀⢸⣿⣿⠀⠀⠀⠈⢻⣿⣿⣿⡇⠀⠀⢸⣿⣿⣀⣀⣀⣀⣀⣀⡀⠀⢻⣿⣧⡀⠀⣠⣿⣿⠇⠀",
+	"⢸⣿⣿⣿⣿⣿⣿⣿⣷⣾⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠛⢿⣿⣿⣿⣿⠟⠁⠀⠀⢸⣿⡇⠀⠀⢸⣿⣿⠀⠀⠀⠀⠀⠙⣿⣿⡇⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠈⠻⣿⣿⣿⣿⡿⠋⠀⠀",
+	"⠸⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠀⠀⠀⠀⠀⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠀⠀⠀⠀⠀",NULL
 };
   int estados[10] ;// 1: Disponible, 0: No disponible
   char *reciboM[] = {
@@ -57,6 +69,7 @@ int main()
   recibir_info();
   lectura();
   //initiate ncurses
+  setlocale(LC_ALL, "");
   initscr();
   clear();
   noecho();
@@ -101,7 +114,7 @@ int main()
   { 
     clear();
     wclear(menu_win);
-  printw( "Utilice las flechas para ir arriba y abajo, Presione enter para elegir"); //paraetros y,x, texto
+  printw( "Utilice las flechas para ir arriba, abajo,derecha o izq, Presione enter para elegir"); //paraetros y,x, texto
     refresh();
   //MENU Peliculas
   //Cargar choices con las peliclas de la base de datos
@@ -110,7 +123,10 @@ int main()
   pelicula[0]=0;
   sala=MenuG(menu_win,frame_win);
   strcpy( pelicula,choices[sala]);
-  printw("La opcion seleccionada es: %s", pelicula);
+  attr_on(COLOR_PAIR(2)|A_BOLD, NULL);
+  mvprintw(1,0,"La pelicula que seleccionaste es: %s", pelicula);
+  attr_off(COLOR_PAIR(2)| A_BOLD, NULL);
+  refresh();
   werase(menu_win);
    //cambiar choices por los horarios
   HorasC();
@@ -119,8 +135,9 @@ int main()
 // second loop  
  contadorL=0; //selecciono un asiento en un misma pelicula
  while (1)
-  { wclear(confirmationW);
-    wclear(wAsientos);
+  {
+    werase(confirmationW);
+    werase(wAsientos);
   asientosC(sala,horario);
   //Asientos
   contadorL++;
@@ -132,7 +149,7 @@ int main()
     }
  // Registra el asiento seleccionado
    rSalas[sala].asientos[horario][opcionSeleccionada]=0;
-   printw("La opcion seleccionada es: %d y la opcion %d", opcionSeleccionada, estados[opcionSeleccionada]);
+   printw("Asiento seleccionado es: %d y la opcion %d", opcionSeleccionada, estados[opcionSeleccionada]);
    escritura();
   //Confirmacion de si desea agregar mas asientos
   confirmacionA = confirmation_box(confirmationW,"Desea agregar mas asientos?");  
@@ -160,6 +177,7 @@ int main()
   refresh();
  //  printw("%d",contadorG);
   //printw("PELICULA: %s",pelicula);
+  Barra(wBarra,"Generando recibo");
   reciboM[6] = malloc(strlen(pelicula) + 41);
   sprintf(reciboM[6], "Total a pagar por %d boletos:%d$", contadorG,contadorG*50);
   printRecibo(recibow);
@@ -213,7 +231,7 @@ int MenuG(WINDOW *menu_win, WINDOW *frame_win)
       break;
 
     default:
-      mvprintw((LINES / 2) + 2, 0, "Caracter presionado = %3d Ojala se imprima como '%c'", c, c);
+      mvprintw((LINES / 2) + 2, 0, "Caracter presionado = %3d  '%c'", c, c);
       refresh();
       break;
     }
@@ -222,8 +240,8 @@ int MenuG(WINDOW *menu_win, WINDOW *frame_win)
     wclear(frame_win);
     if (choices[highlight - 1] && strlen(choices[highlight - 1]) > 0)
      printPelicula(frame_win, ("Opcion %d pelicula %s\n", highlight, choices[highlight - 1]),asciiArt);
-    //  mvwprintw(frame_win, 1, 1, "Opcion %d pelicula %s\n", highlight, choices[highlight - 1]); 
     wborder(frame_win, '|', '|', '-', '-', '+', '+', '+', '+');
+    //  mvwprintw(frame_win, 1, 1, "Opcion %d pelicula %s\n", highlight, choices[highlight - 1]); 
     wrefresh(frame_win);
 
     if (choice != 0) /* El usuario eligio salir del bucle infinito */
@@ -234,7 +252,7 @@ int MenuG(WINDOW *menu_win, WINDOW *frame_win)
   }
 
   attron(A_BOLD | A_REVERSE);
-  mvprintw(2, 10, "Elegiste la opcion %d con la cadena %s\n", choice, choices[choice - 1]);
+  mvprintw(2,0, "Elegiste la opcion %d con la opcion: %s\n", choice, choices[choice - 1]);
   attroff(A_BOLD | A_REVERSE);
 
   return choice-1;
@@ -290,10 +308,9 @@ for (int i = 0; i < 5; i++) {
 }
 void asientosC(int sala,int horario ){
   //sala pelicual , horario el arreglo de asientos
-  for (int i = 0; i < 9; i++) {
+  for (int i = 0; i < 10; i++) {
     estados[i] = rSalas[sala].asientos[horario][i];
   } 
-  estados[9] = 1;
 }
 
 
