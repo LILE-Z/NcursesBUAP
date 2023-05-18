@@ -159,8 +159,8 @@ int main()
  
   }
   // Aqui se pasan a recibo los datos de la pelicula y los asientos
-  reciboM[contadorRecibo] = malloc(strlen(pelicula) + 41);
-  sprintf(reciboM[contadorRecibo], "%s ------ boletos :%d", pelicula, contadorL);
+  reciboM[contadorRecibo] = malloc(strlen(pelicula) + 51);
+  sprintf(reciboM[contadorRecibo], "%s ---- Sala: %d -- Horario:%s ---- Boletos :%d", pelicula,sala+1,choices[horario], contadorL);
   //reciboM[contadorRecibo] = malloc(strlen(pelicula) + 1); // Asignar memoria para la cadena
   //strcpy(reciboM[contadorRecibo], pelicula);
   contadorG+=contadorL;
@@ -293,8 +293,8 @@ void HorasC() {
   // Modificar las elecciones
   choices[0] = strdup("11:00");
   choices[1] = strdup("13:00");
-  choices[2] = strdup("03:00");
-  choices[3] = strdup("06:00");
+  choices[2] = strdup("15:00");
+  choices[3] = strdup("18:00");
   choices[4] = strdup("");
 }
 void peliculasC() {
@@ -312,7 +312,6 @@ void asientosC(int sala,int horario ){
     estados[i] = rSalas[sala].asientos[horario][i];
   } 
 }
-
 
 
 //Pelicula 
